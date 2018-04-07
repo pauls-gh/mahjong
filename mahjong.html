@@ -1,0 +1,71 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+    <title>Mahjong</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser-ce@2.9.4"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+    <textarea id="messages" readonly></textarea>
+    <div id="buttondiv" style="visibility: hidden">
+        <textarea id="info" readonly></textarea>
+        <button id="button1" class="button">button1</button>
+        <button id="button2" class="button">button2</button>
+        <button id="button3" class="button">button3</button>
+        <button id="button4" class="button">button4</button>
+    </div>
+
+    <div id="controldiv" style="visibility: hidden">
+        <button id="start" class="button">Start Game</button>
+        <button id="sort1" class="button">Sort by suit</button>
+        <button id="sort2" class="button">Sort by rank</button>
+    </div>    
+    <style type="text/css">
+        #buttondiv {
+            width: 300px;
+            height: 100px;
+            position: absolute;
+            top: 454px;
+            left: 400px;
+        }
+        #info {
+            width: 300px;
+            resize: none;
+        }
+        .button {
+            background-color: #FFFFFF;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .button:disabled {
+            opacity: 0.65; 
+            cursor: not-allowed;
+        }
+        #messages {
+            width: 300px;
+            height: 448px;
+            position: absolute;
+            top: 0;
+            left: 1052px;
+            resize: none;
+        }
+        #controldiv {
+            width: 300px;
+            height: 100px;
+            position: absolute;
+            top: 460px;
+            left: 1052px;
+        }        
+    </style>
+    
+</head>
+<body>
+
+<script src="game.js" type="module"></script>
+<script nomodule>alert("Browser does not support ES6 modules. Please enable ES6 module support or alternatively use Google Chrome.");</script>
+
+</body>
+</html>
