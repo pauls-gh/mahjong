@@ -115,7 +115,7 @@ export class Hand {
     //  - will not unselect
     getSelection() {
         const tileArray = [];
-  
+
         for (const tile of this.hiddenTileArray) {
             if (tile.selected) {
                 tileArray.push(tile);
@@ -195,9 +195,22 @@ export class Hand {
                             this.selectCount--;
                             tile.selected = !tile.selected;
                         } else if (this.selectCount < maxSelect) {
-                            sprite.y -= 25;
-                            this.selectCount++;
-                            tile.selected = !tile.selected;
+                            let bSelectOk = true;
+
+                            if (gGameLogic.state === STATE.LOOP_EXPOSE_TILES) {
+                                // Selected tile must be a match for discardTile (or a joker) to form a pong/kong/quint
+                                if (tile.suit !== SUIT.JOKER && 
+                                    (tile.suit !== gGameLogic.discardTile.suit || tile.number !== gGameLogic.discardTile.number)) {
+                                    bSelectOk = false;
+                                    gGameLogic.displayErrorText(" Select same tile or joker to form pong/kong/quint ");
+                                }
+                            }
+
+                            if (bSelectOk) {
+                                sprite.y -= 25;
+                                this.selectCount++;
+                                tile.selected = !tile.selected;
+                            }
                         }
 
                         if (this.selectCount > maxSelect || this.selectCount < minSelect) {

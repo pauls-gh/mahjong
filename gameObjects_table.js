@@ -290,7 +290,7 @@ export class Table {
         }
 
         this.players[winningPlayer].showHand();
-        
+
         return {
             playerOption: searchOption,
             winningPlayer

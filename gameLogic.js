@@ -1,4 +1,4 @@
-import {printMessage, printInfo} from "./game.js";
+import {game, printMessage, printInfo} from "./game.js";
 import {STATE, PLAYER_OPTION, PLAYER} from "./constants.js";
 import {Card} from "./card/card.js";
 
@@ -22,6 +22,29 @@ export class GameLogic {
         this.sort1Function = null;
         this.sort2Function = null;
         this.startButtonFunction = null;
+        this.wallText = null;
+        this.errorText = null;
+        this.errorTextArray = [];
+        this.errorTextSemaphore = 0;
+        this.discardTile = null;
+    }
+
+    create() {
+        // Create Phaser.IO UI elements
+        this.wallText = game.add.text(190, 160, "", {
+            font: "14px Arial",
+            fill: "#ffffff",
+            align: "left"
+        });
+        this.wallText.visible = false;
+
+        this.errorText = game.add.text(400, 400, "", {
+            font: "14px Arial",
+            fill: "#ff8080",
+            backgroundColor: 'rgba(0,0,0,1)',
+            align: "left"
+        });
+        this.wallText.visible = false;    
     }
 
     init() {
@@ -226,6 +249,8 @@ export class GameLogic {
 
         const tile = this.table.wall.remove();
 
+        this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
+
         if (tile) {
             const text = tile.getText();
             printMessage("Player " + this.currPlayer + " picks " +  text + " from wall\n");
@@ -355,6 +380,9 @@ export class GameLogic {
                 this.state = STATE.LOOP_EXPOSE_TILES;
                 this.updateUI();
                 
+                // Save discardTile so it can be accessed by Hand object when selecting tiles
+                this.discardTile = discardTile;
+
                 const exposeInfo = await this.exposeTiles(); 
                 
                 this.state = STATE.LOOP_EXPOSE_TILES_COMPLETE;
@@ -480,7 +508,6 @@ export class GameLogic {
                     const tileArray = this.table.players[PLAYER.BOTTOM].hand.getSelection()
                     // Unselect any tiles
                     this.table.players[PLAYER.BOTTOM].hand.resetSelection();
-
                     resolve({ 
                         playerOption: PLAYER_OPTION.EXPOSE_TILES,
                         tileArray: tileArray
@@ -494,6 +521,8 @@ export class GameLogic {
 
                 button2.removeEventListener("click", this.button2Function);
                 this.button2Function = function () {
+                   // Unselect any tiles
+                   this.table.players[PLAYER.BOTTOM].hand.resetSelection();
                     resolve({ 
                         playerOption: PLAYER_OPTION.DISCARD_TILE,
                         tileArray: []
@@ -507,6 +536,8 @@ export class GameLogic {
 
                 button3.removeEventListener("click", this.button3Function);
                 this.button3Function = function () {
+                   // Unselect any tiles
+                   this.table.players[PLAYER.BOTTOM].hand.resetSelection();
                     resolve({ 
                         playerOption: PLAYER_OPTION.MAHJONG,
                         tileArray: []
@@ -622,6 +653,7 @@ export class GameLogic {
             button3.style.display = "none";
             button4.style.display = "none";            
             window.document.getElementById("buttondiv").style.visibility = "";
+            this.wallText.visible = true;
             break;   
 
             case STATE.DEAL:
@@ -634,7 +666,8 @@ export class GameLogic {
             printMessage("Starting Charleston #1\n");   
             button1.innerText = "Pass Tiles";
             button1.disabled = true;
-            button1.style.display = "";            
+            button1.style.display = "";  
+            this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
             break;    
             
             case STATE.CHARLESTON_QUERY:
@@ -698,7 +731,6 @@ export class GameLogic {
             break;
 
             case STATE.LOOP_PICK_FROM_WALL:
-            printMessage("Wall tile count = " + this.table.wall.tileArray.length + "\n");
             break;    
             
             case STATE.LOOP_CHOOSE_DISCARD:
@@ -804,4 +836,38 @@ export class GameLogic {
             this.sort2Function = null;
         }         
     } 
+
+    displayErrorText(str) {
+        // Don't repeat error messages
+        if (this.errorTextArray.length) {
+            if (str === this.errorTextArray[this.errorTextArray.length - 1]) {
+                return;
+            }
+        }
+
+        if (this.errorTextSemaphore === 0) {
+            this.errorTextSemaphore++;
+            this.errorTextArray.push(str);
+            this.displayAllError();
+        } else {
+            this.errorTextSemaphore++;
+            this.errorTextArray.push(str);
+        }
+    }
+
+    async displayAllError() {
+        this.errorText.visible = true;
+
+        while (this.errorTextSemaphore) {
+            const str = this.errorTextArray.shift();
+            this.errorText.setText(str);
+            await this.sleep(4000);
+            this.errorTextSemaphore--;
+        }
+        this.errorText.visible = false;
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }    
 }

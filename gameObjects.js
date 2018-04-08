@@ -148,13 +148,19 @@ export class Wall {
     destroy() {
     }
 
+    getCount() {
+        return this.tileArray.length;
+    }
+
     insert(tile) {
         tile.sprite.visible = false;
         this.tileArray.push(tile);
     }
 
     remove() {
-        return this.tileArray.pop();
+        const tile = this.tileArray.pop();
+
+        return tile;
     }
 
     shuffle() {

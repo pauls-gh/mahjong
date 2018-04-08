@@ -1,4 +1,4 @@
-import {WINDOW_WIDTH, WINDOW_HEIGHT, PLAYER} from "./constants.js";
+import {WINDOW_WIDTH, WINDOW_HEIGHT} from "./constants.js";
 import {GameLogic} from "./gameLogic.js";
 import {Table} from "./gameObjects_table.js";
 
@@ -35,6 +35,7 @@ function create() {
     game.stage.backgroundColor = "rgb(0, 128, 0)";
 
     // Create sprites etc
+    gGameLogic.create();
     gTable.create();
 
     // Init game logic
