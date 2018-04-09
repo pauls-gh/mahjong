@@ -1,6 +1,8 @@
 import {game, printMessage, printInfo} from "./game.js";
-import {STATE, PLAYER_OPTION, PLAYER} from "./constants.js";
+import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND} from "./constants.js";
 import {Card} from "./card/card.js";
+import {Tile} from "./gameObjects.js";
+import {Hand} from "./gameObjects_hand.js";
 
 // PRIVATE CONSTANTS
 
@@ -27,6 +29,8 @@ export class GameLogic {
         this.errorTextArray = [];
         this.errorTextSemaphore = 0;
         this.discardTile = null;
+        this.gameResult = { mahjong: false,
+                            winner: 0};
     }
 
     create() {
@@ -75,6 +79,9 @@ export class GameLogic {
         this.state = STATE.START;
         this.updateUI();
 
+        this.gameResult.mahjong = false;
+        this.gameResult.winner = 0;
+
         this.table.switchPlayer(PLAYER.BOTTOM);
 
         // Reset table
@@ -89,9 +96,39 @@ export class GameLogic {
         this.state = STATE.DEAL;
         this.updateUI();
 
-        this.table.deal();
+        // Create hand for debugging / testing
+        const hand = new Hand(false);
 
-        this.charleston();
+        if (1) {
+            // FF 1111 DDDD 1111 (3 suits, like numbers)
+            hand.insert(new Tile(SUIT.FLOWER, 0));
+            hand.insert(new Tile(SUIT.FLOWER, 0));
+            hand.insert(new Tile(SUIT.DOT, 4));
+            hand.insert(new Tile(SUIT.DOT, 4));
+            hand.insert(new Tile(SUIT.DOT, 4));
+            hand.insert(new Tile(SUIT.DOT, 4));
+
+            hand.insert(new Tile(SUIT.BAM, 4));
+            hand.insert(new Tile(SUIT.BAM, 4));
+            hand.insert(new Tile(SUIT.BAM, 4));
+            hand.insert(new Tile(SUIT.BAM, 4));
+
+            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
+
+            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));            
+        }
+        this.table.deal(hand);
+
+        this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
+        
+        // debugging - skip charleston
+        if (1) {
+            this.loop();
+        } else {
+            this.charleston();
+        }
     }
 
     async charleston() {
@@ -170,8 +207,13 @@ export class GameLogic {
             this.updateUI();
 
             // PICK TILE FROM WALL
+            
             if (!skipPick) {
-                this.pickFromWall();
+                const pick = this.pickFromWall();
+                if (!pick) {
+                    // No more tiles - wall game.
+                    break;
+                }
             }
             skipPick = false;
 
@@ -183,10 +225,25 @@ export class GameLogic {
             this.table.players[this.currPlayer].showHand();
 
             if (discardInfo.playerOption === PLAYER_OPTION.MAHJONG) {
+                this.gameResult.mahjong = true;
+                this.gameResult.winner = this.currPlayer;
                 break;
             }
 
             const discardTile = discardInfo.tileArray[0];
+            
+            if (discardTile.suit === SUIT.JOKER) {
+                // Joker discarded - add to discard pile
+                this.table.discards.insertDiscard(discardTile);
+                this.table.discards.showDiscards();
+
+                //  Move to next player
+                this.currPlayer++;
+                if (this.currPlayer > 3) {
+                    this.currPlayer = 0;
+                }                
+                continue;
+            }
 
             // CLAIM DISCARD? (for exposure/mahjong).            
 
@@ -208,6 +265,8 @@ export class GameLogic {
             const claimResult = this.table.processClaimArray(this.currPlayer, claimArray, discardTile);
 
             if (claimResult.playerOption === PLAYER_OPTION.MAHJONG) {
+                this.gameResult.mahjong = true;
+                this.gameResult.winner = claimResult.winningPlayer;
                 break;
             }
 
@@ -257,8 +316,10 @@ export class GameLogic {
     
             this.table.players[this.currPlayer].hand.insert(tile);
             this.table.players[this.currPlayer].showHand();
+            
+            return true;
         } else {
-            printMessage("ERROR - pickFromWall.  No tiles available\n");
+            return false;
         }
 
     }
@@ -776,9 +837,31 @@ export class GameLogic {
             break;   
 
             case STATE.END:
-            printMessage("Game over\n");
+            if (this.gameResult.mahjong) {
+                const validInfo = this.card.validateHand14(this.table.players[this.gameResult.winner].hand);
+                if (validInfo.valid) {
+                    printMessage("Game over - Mahjong by player " + this.gameResult.winner + "\n");
+                    printInfo("Game over - Mahjong by player " + this.gameResult.winner);
+                } else {
+                    printMessage("Game over - Invalid Mahjong by player " + this.gameResult.winner + "\n");
+                    printInfo("Game over - Invalid Mahjong by player " + this.gameResult.winner);
+                }
+            } else {
+                printMessage("Game over - Wall game\n");
+                printInfo("Game over - Wall game");
+            }
+
+            button1.style.display = "none";  
+            button2.style.display = "none";  
+            button3.style.display = "none";  
+            button4.style.display = "none";  
+
             this.disableSortButtons();
+            sort1.style.display = "none";
+            sort2.style.display = "none";
+
             startButton.disabled = false;
+
             break;    
             
             

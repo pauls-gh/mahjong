@@ -152,6 +152,20 @@ export class Wall {
         return this.tileArray.length;
     }
 
+    findAndRemove(findTile) {
+        for (const tile of this.tileArray) {
+            if (tile.suit === findTile.suit && tile.number === findTile.number) {
+                // Remove tile from array
+                const index = this.tileArray.indexOf(tile);
+                this.tileArray.splice(index, 1);
+
+                return tile;
+            }
+        }
+
+        return null;
+    }
+
     insert(tile) {
         tile.sprite.visible = false;
         this.tileArray.push(tile);

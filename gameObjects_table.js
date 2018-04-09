@@ -123,21 +123,31 @@ export class Table {
         this.boxes[player].visible = true;
     }
 
-    deal() {
+    deal(initPlayer0Hand) {
         // Shuffle tiles
         this.wall.shuffle();
 
-        // Deal tiles to players
-        for (let i = 0; i < 4; i++) {
+        // Player 0 (user, dealer, 14 tiles)
+        for (let j = 0; j < 14; j++) {
+            let tile = null;
+            if (initPlayer0Hand.hiddenTileArray.length) {
+                // Init Player 0 hand with given tiles
+                // This is useful for testing / training mode
+                const findTile = initPlayer0Hand.hiddenTileArray.pop();
+                tile = this.wall.findAndRemove(findTile);
+            } else {
+                tile = this.wall.remove();
+            }
+            this.players[0].hand.insert(tile);
+        }
+
+        // Deal tiles to players 1 - 3
+        for (let i = 1; i < 4; i++) {
             for (let j = 0; j < 13; j++) {
                 const tile = this.wall.remove();
                 this.players[i].hand.insert(tile);
             }
         }
-
-        // Dealer starts with extra tile
-        const tile = this.wall.remove();
-        this.players[0].hand.insert(tile);
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {

@@ -55,15 +55,22 @@ export class Card {
         this.debugPrint("suit(s) = " + suitStr + "\n");
     }
 
-    validateHand(hand, singleTile) {
-        // Validation info
-        const info = {
-            valid: false,
-            tileCount: 0,
-            minNum: 9999,
-            suits: []
-        };
+    validateHand14(hand) {
+        // Consolidate hand (14 tiles) to test array
+        const test = [];
 
+        for (const tile of hand.hiddenTileArray) {
+            test.push(tile);
+        }
+
+        for (const tile of hand.exposedTileArray) {
+            test.push(tile);
+        }
+
+        return this.validateHand(test);
+    }
+
+    validateHand13(hand, singleTile) {
         // Consolidate hand + singleTile to test array
         const test = [];
 
@@ -78,6 +85,20 @@ export class Card {
         if (singleTile) {
             test.push(singleTile);
         }
+
+        return this.validateHand(test);
+    }
+
+    // Input - tile array of length 14
+    // Output - validation info object
+    validateHand(test) {
+        // Validation info
+        const info = {
+            valid: false,
+            tileCount: 0,
+            minNum: 9999,
+            suits: []
+        };
 
         // Validate number of tiles
         info.tileCount = test.length;

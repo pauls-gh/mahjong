@@ -133,10 +133,16 @@ export class Hand {
             let valb = b.number;
 
             if (a.suit > SUIT.DOT) {
+                // Sort order of winds dragons is > char/bam/dot
                 vala += 10 + (a.suit * 10);
+            } else {
+                // Add suit to number to make sure char/bam/dot are grouped together
+                vala += a.suit;
             }
             if (b.suit > SUIT.DOT) {
                 valb += 10 + (b.suit * 10);
+            } else {
+                valb += b.suit;
             }
 
             return vala - valb;
