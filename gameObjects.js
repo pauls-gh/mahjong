@@ -124,7 +124,12 @@ export class Wall {
                 for (let num = 1; num <= group.maxNum; num++) {
                     let number = num;
                     if (group.maxNum === 1) {
-                        number = group.prefix.indexOf(prefix);
+                        if (group.suit === SUIT.FLOWER) {
+                            // Number is irrelevant for flowers
+                            number = 0;
+                        } else {
+                            number = group.prefix.indexOf(prefix);
+                        }
                     }
                     let spriteName = prefix;
                     if (group.maxNum !== 1) {

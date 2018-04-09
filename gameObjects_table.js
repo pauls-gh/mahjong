@@ -151,6 +151,7 @@ export class Table {
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {
+            this.players[i].hand.sortSuit();
             this.players[i].showHand();
         }
     }

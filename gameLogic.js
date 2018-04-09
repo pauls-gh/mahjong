@@ -115,10 +115,14 @@ export class GameLogic {
 
             hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
             hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
-            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
+            //hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
+            //hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));            
 
-            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));            
-        }
+            hand.insert(new Tile(SUIT.JOKER, 0));            
+            hand.insert(new Tile(SUIT.JOKER, 0));            
+
+        } 
+
         this.table.deal(hand);
 
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
@@ -274,6 +278,9 @@ export class GameLogic {
                 // Tile claimed with exposure. Winning Player is next to discard.
                 this.currPlayer = claimResult.winningPlayer;
                 skipPick = true;
+
+                const text = discardTile.getText();
+                printMessage("Player " + this.currPlayer + " claims " + text + " \n");
             } else {
                 // Tile discarded - move to next player
                 this.currPlayer++;

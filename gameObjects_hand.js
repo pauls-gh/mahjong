@@ -212,6 +212,14 @@ export class Hand {
                                 }
                             }
 
+                            if (gGameLogic.state === STATE.CHARLESTON1 || gGameLogic.state === STATE.CHARLESTON2 || 
+                                gGameLogic.state === STATE.COURTESY) {
+                                if (tile.suit === SUIT.JOKER) {
+                                    bSelectOk = false;
+                                    gGameLogic.displayErrorText(" Joker cannot be passed during Charleston ");
+                                }
+                            }
+
                             if (bSelectOk) {
                                 sprite.y -= 25;
                                 this.selectCount++;

@@ -56,6 +56,8 @@ export class Card {
     }
 
     validateHand14(hand) {
+        let allHidden = true;
+
         // Consolidate hand (14 tiles) to test array
         const test = [];
 
@@ -64,13 +66,16 @@ export class Card {
         }
 
         for (const tile of hand.exposedTileArray) {
+            allHidden = false;
             test.push(tile);
         }
 
-        return this.validateHand(test);
+        return this.validateHand(test, allHidden);
     }
 
     validateHand13(hand, singleTile) {
+        let allHidden = true;
+
         // Consolidate hand + singleTile to test array
         const test = [];
 
@@ -79,6 +84,7 @@ export class Card {
         }
 
         for (const tile of hand.exposedTileArray) {
+            allHidden = false;
             test.push(tile);
         }
 
@@ -86,18 +92,19 @@ export class Card {
             test.push(singleTile);
         }
 
-        return this.validateHand(test);
+        return this.validateHand(test, allHidden);
     }
 
-    // Input - tile array of length 14
+    // Input - tile array of length 14, allHidden
     // Output - validation info object
-    validateHand(test) {
+    validateHand(test, allHidden) {
         // Validation info
         const info = {
             valid: false,
             tileCount: 0,
             minNum: 9999,
-            suits: []
+            suits: [],
+            allHidden
         };
 
         // Validate number of tiles
@@ -159,6 +166,10 @@ export class Card {
 
     matchHand(test, info, validHand) {
         let match = false;
+
+        if (validHand.concealed && !info.allHidden) {
+            return false;
+        }
 
         // Number of suits (char,dot,bam,flower,dragon, wind, joker) must be >= number of vsuits
         if (info.suits.length < validHand.vsuitCount) {
