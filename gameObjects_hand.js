@@ -31,10 +31,10 @@ class TileSet {
         return temp;
     }
 
-    reset() {
+    reset(wall) {
         // Reset group - return all tiles to wall
         while (this.tileArray.length) {
-            this.wall.insert(this.remove(this.tileArray[0]));
+            wall.insert(this.remove(this.tileArray[0]));
         }
     }
 
@@ -191,12 +191,12 @@ export class Hand {
         return false;
     }
 
-    reset() {
+    reset(wall) {
         // Reset hand - return all tiles to wall
-        this.hiddenTileSet.reset();
+        this.hiddenTileSet.reset(wall);
 
         for (const group of this.exposedTileSetArray) {
-            group.reset();
+            group.reset(wall);
         }
     }
 

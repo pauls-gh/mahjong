@@ -97,7 +97,7 @@ export class Table {
     reset() {
         // Reset table - remove tiles from players hands/ discard pile and put back into wall
         for (let i = 0; i < 4; i++) {
-            this.players[i].hand.reset();
+            this.players[i].hand.reset(this.wall);
         }
 
         while (this.discards.tileArray.length) {
