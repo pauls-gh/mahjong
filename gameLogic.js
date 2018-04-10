@@ -101,25 +101,25 @@ export class GameLogic {
 
         if (1) {
             // FF 1111 DDDD 1111 (3 suits, like numbers)
-            hand.insert(new Tile(SUIT.FLOWER, 0));
-            hand.insert(new Tile(SUIT.FLOWER, 0));
-            hand.insert(new Tile(SUIT.DOT, 4));
-            hand.insert(new Tile(SUIT.DOT, 4));
-            hand.insert(new Tile(SUIT.DOT, 4));
-            hand.insert(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
 
-            hand.insert(new Tile(SUIT.BAM, 4));
-            hand.insert(new Tile(SUIT.BAM, 4));
-            hand.insert(new Tile(SUIT.BAM, 4));
-            hand.insert(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
 
-            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
-            hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
-            //hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));
-            //hand.insert(new Tile(SUIT.DRAGON, DRAGON.RED));            
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));            
 
-            hand.insert(new Tile(SUIT.JOKER, 0));            
-            hand.insert(new Tile(SUIT.JOKER, 0));            
+            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
 
         } 
 
@@ -321,7 +321,7 @@ export class GameLogic {
             const text = tile.getText();
             printMessage("Player " + this.currPlayer + " picks " +  text + " from wall\n");
     
-            this.table.players[this.currPlayer].hand.insert(tile);
+            this.table.players[this.currPlayer].hand.insertHidden(tile);
             this.table.players[this.currPlayer].showHand();
             
             return true;
@@ -361,10 +361,23 @@ export class GameLogic {
                     }.bind(this);
                     button1.addEventListener("click", this.button1Function);
 
-                    // Mahjong button
+                    // Exchange jokers button
                     const button2 = window.document.getElementById("button2");
                     button2.removeEventListener("click", this.button2Function);
                     this.button2Function = function () {
+                        // TODO - exchange joker and tile
+                        // Unselect any tiles
+                        this.table.players[this.currPlayer].hand.resetSelection();
+
+                        // Do not resolve() - must still discard
+                    }.bind(this);
+
+                    button2.addEventListener("click", this.button2Function);                      
+
+                    // Mahjong button
+                    const button3 = window.document.getElementById("button3");
+                    button3.removeEventListener("click", this.button3Function);
+                    this.button3Function = function () {
                         // Unselect any tiles
                         this.table.players[this.currPlayer].hand.resetSelection();
 
@@ -372,7 +385,7 @@ export class GameLogic {
                             tileArray: []});
                     }.bind(this);
 
-                    button2.addEventListener("click", this.button2Function);                    
+                    button3.addEventListener("click", this.button3Function);                    
 
                 });
         } else {
@@ -573,7 +586,7 @@ export class GameLogic {
                 button1.removeEventListener("click", this.button1Function);
                 this.button1Function = function () {
                     // Get selected tiles
-                    const tileArray = this.table.players[PLAYER.BOTTOM].hand.getSelection()
+                    const tileArray = this.table.players[PLAYER.BOTTOM].hand.getSelectionHidden();
                     // Unselect any tiles
                     this.table.players[PLAYER.BOTTOM].hand.resetSelection();
                     resolve({ 
@@ -806,9 +819,12 @@ export class GameLogic {
             button1.innerText = "Discard";
             button1.disabled = true;
             button1.style.display = "";       
-            button2.innerText = "Mahjong!";
-            button2.disabled = false;
+            button2.innerText = "Exchange joker";
+            button2.disabled = true;
             button2.style.display = "";  
+            button3.innerText = "Mahjong!";
+            button3.disabled = false;
+            button3.style.display = "";  
             break; 
             
             case STATE.LOOP_QUERY_CLAIM_DISCARD:
@@ -818,7 +834,8 @@ export class GameLogic {
             button1.style.display = "";
             button2.innerText = "Yes";
             button2.disabled = false;
-            button2.style.display = "";            
+            button2.style.display = "";     
+            button3.style.display = "none";
             break; 
 
             case STATE.LOOP_QUERY_CLAIM_DISCARD_COMPLETE:
@@ -896,12 +913,12 @@ export class GameLogic {
         }      
 
         this.sort1Function = function () {
-            this.table.players[PLAYER.BOTTOM].hand.sortSuit();
+            this.table.players[PLAYER.BOTTOM].hand.sortSuitHidden();
             this.table.players[PLAYER.BOTTOM].showHand();
         }.bind(this);
 
         this.sort2Function = function () {
-            this.table.players[PLAYER.BOTTOM].hand.sortRank();
+            this.table.players[PLAYER.BOTTOM].hand.sortRankHidden();
             this.table.players[PLAYER.BOTTOM].showHand();
         }.bind(this);        
         

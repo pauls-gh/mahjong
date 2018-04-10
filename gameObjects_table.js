@@ -97,12 +97,7 @@ export class Table {
     reset() {
         // Reset table - remove tiles from players hands/ discard pile and put back into wall
         for (let i = 0; i < 4; i++) {
-            while (this.players[i].hand.hiddenTileArray.length) {
-                this.wall.insert(this.players[i].hand.remove(this.players[i].hand.hiddenTileArray[0]));
-            }
-            while (this.players[i].hand.exposedTileArray.length) {
-                this.wall.insert(this.players[i].hand.removeExposed(this.players[i].hand.exposedTileArray[0]));
-            }
+            this.players[i].hand.reset();
         }
 
         while (this.discards.tileArray.length) {
@@ -130,28 +125,28 @@ export class Table {
         // Player 0 (user, dealer, 14 tiles)
         for (let j = 0; j < 14; j++) {
             let tile = null;
-            if (initPlayer0Hand.hiddenTileArray.length) {
+            if (initPlayer0Hand.getLength()) {
                 // Init Player 0 hand with given tiles
                 // This is useful for testing / training mode
-                const findTile = initPlayer0Hand.hiddenTileArray.pop();
+                const findTile = initPlayer0Hand.hiddenTileSet.tileArray.pop();
                 tile = this.wall.findAndRemove(findTile);
             } else {
                 tile = this.wall.remove();
             }
-            this.players[0].hand.insert(tile);
+            this.players[0].hand.insertHidden(tile);
         }
 
         // Deal tiles to players 1 - 3
         for (let i = 1; i < 4; i++) {
             for (let j = 0; j < 13; j++) {
                 const tile = this.wall.remove();
-                this.players[i].hand.insert(tile);
+                this.players[i].hand.insertHidden(tile);
             }
         }
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {
-            this.players[i].hand.sortSuit();
+            this.players[i].hand.sortSuitHidden();
             this.players[i].showHand();
         }
     }
@@ -286,18 +281,20 @@ export class Table {
 
         if (searchOption === PLAYER_OPTION.MAHJONG) {
             // Move discard to winner's hand
-            this.players[winningPlayer].hand.insert(discardTile);
+            this.players[winningPlayer].hand.insertHidden(discardTile);
         } else {
             // Expose winner's (discard+exposure) tiles
 
             // Adjust hand - remove tile from hidden and insert to exposed
             for (const tile of claimArray[winningPlayer].tileArray) {
-                this.players[winningPlayer].hand.remove(tile);
+                this.players[winningPlayer].hand.removeHidden(tile);
             }
-            this.players[winningPlayer].hand.insertExposed(claimArray[winningPlayer].tileArray);
 
-            // Add discarded tile to winner's exposed hand
-            this.players[winningPlayer].hand.insertExposed([discardTile]);
+            // Make new copy of claimArray
+            let exposeTileArray = [];
+            exposeTileArray = exposeTileArray.concat(claimArray[winningPlayer].tileArray);
+            exposeTileArray.push(discardTile);
+            this.players[winningPlayer].hand.insertExposed(exposeTileArray);
         }
 
         this.players[winningPlayer].showHand();

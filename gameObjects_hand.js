@@ -9,88 +9,32 @@ import {
 
 // PRIVATE GLOBALS
 
-
-export class Hand {
+class TileSet {
     constructor(inputEnabled) {
-        this.hiddenTileArray = [];
-        this.exposedTileArray = [];
+        this.tileArray = [];
         this.inputEnabled = inputEnabled;
         this.selectCount = 0;
     }
 
     getLength() {
-        return this.hiddenTileArray.length + this.exposedTileArray.length;
+        return this.tileArray.length;
     }
 
-    showHand(playerInfo) {
-        // Calculate positions for all tiles in hand
-        let offsetX = 0;
-        let offsetY = 0;
-        for (const tile of this.hiddenTileArray) {
-            tile.sprite.x = playerInfo.x + offsetX;
-            tile.sprite.y = playerInfo.y + offsetY;
-            tile.sprite.angle = playerInfo.angle;
-            if (playerInfo.id === PLAYER.BOTTOM) {
-                tile.sprite.scale.set(1.0, 1.0);
-            } else {
-                tile.sprite.scale.set(SPRITE_SCALE_X, SPRITE_SCALE_Y);
-            }
-            tile.sprite.visible = true;
+    // Return group as simple array of tiles
+    getTileArray() {
+        const temp = [];
 
-            switch (playerInfo.id) {
-            case PLAYER.BOTTOM:
-                offsetX += SPRITE_WIDTH;
-                break;
-            case PLAYER.TOP:
-                offsetX += SPRITE_WIDTH * SPRITE_SCALE_X;
-                break;
-            case PLAYER.LEFT:
-            case PLAYER.RIGHT:
-            default:
-                offsetY += SPRITE_WIDTH * SPRITE_SCALE_X;
-                break;
-            }
+        for (const tile of this.tileArray) {
+            temp.push(tile);
         }
 
-        // Separate hidden and exposed tiles
-        switch (playerInfo.id) {
-        case PLAYER.BOTTOM:
-            offsetX += SPRITE_WIDTH;
-            break;
-        case PLAYER.TOP:
-            offsetX += SPRITE_WIDTH * SPRITE_SCALE_X;
-            break;
-        case PLAYER.LEFT:
-        case PLAYER.RIGHT:
-        default:
-            offsetY += SPRITE_WIDTH * SPRITE_SCALE_X;
-            break;
-        }
+        return temp;
+    }
 
-        for (const tile of this.exposedTileArray) {
-            tile.sprite.x = playerInfo.x + offsetX;
-            tile.sprite.y = playerInfo.y + offsetY;
-            tile.sprite.angle = playerInfo.angle;
-            if (playerInfo.id === PLAYER.BOTTOM) {
-                tile.sprite.scale.set(1.0, 1.0);
-            } else {
-                tile.sprite.scale.set(SPRITE_SCALE_X, SPRITE_SCALE_Y);
-            }
-            tile.sprite.visible = true;
-
-            switch (playerInfo.id) {
-            case PLAYER.BOTTOM:
-                offsetX += SPRITE_WIDTH;
-                break;
-            case PLAYER.TOP:
-                offsetX += SPRITE_WIDTH * SPRITE_SCALE_X;
-                break;
-            case PLAYER.LEFT:
-            case PLAYER.RIGHT:
-            default:
-                offsetY += SPRITE_WIDTH * SPRITE_SCALE_X;
-                break;
-            }
+    reset() {
+        // Reset group - return all tiles to wall
+        while (this.tileArray.length) {
+            this.wall.insert(this.remove(this.tileArray[0]));
         }
     }
 
@@ -101,7 +45,7 @@ export class Hand {
 
         window.document.getElementById("button1").disabled = true;
 
-        for (const tile of this.hiddenTileArray) {
+        for (const tile of this.tileArray) {
             if (tile.selected) {
                 tile.selected = false;
                 tile.sprite.y += 25;
@@ -110,25 +54,20 @@ export class Hand {
         }
     }
 
-    // Return selected tiles.
-    //  - will not remove from hand
-    //  - will not unselect
     getSelection() {
-        const tileArray = [];
+        const temp = [];
 
-        for (const tile of this.hiddenTileArray) {
+        for (const tile of this.tileArray) {
             if (tile.selected) {
-                tileArray.push(tile);
+                temp.push(tile);
             }
         }
 
-        return tileArray;
+        return temp;
     }
 
     sortRank() {
-        this.resetSelection();
-
-        this.hiddenTileArray.sort((a, b) => {
+        this.tileArray.sort((a, b) => {
             let vala = a.number;
             let valb = b.number;
 
@@ -150,9 +89,7 @@ export class Hand {
     }
 
     sortSuit() {
-        this.resetSelection();
-
-        this.hiddenTileArray.sort((a, b) => {
+        this.tileArray.sort((a, b) => {
             const vala = a.number + (a.suit * 10);
             const valb = b.number + (b.suit * 10);
 
@@ -160,8 +97,164 @@ export class Hand {
         });
     }
 
+    // Returns updated x, y
+    showGroup(playerInfo, posX, posY) {
+
+        let x = posX;
+        let y = posY;
+
+        for (const tile of this.tileArray) {
+            tile.sprite.x = x;
+            tile.sprite.y = y;
+            tile.sprite.angle = playerInfo.angle;
+            if (playerInfo.id === PLAYER.BOTTOM) {
+                tile.sprite.scale.set(1.0, 1.0);
+            } else {
+                tile.sprite.scale.set(SPRITE_SCALE_X, SPRITE_SCALE_Y);
+            }
+            tile.sprite.visible = true;
+
+            switch (playerInfo.id) {
+            case PLAYER.BOTTOM:
+                x += SPRITE_WIDTH;
+                break;
+            case PLAYER.TOP:
+                x += SPRITE_WIDTH * SPRITE_SCALE_X;
+                break;
+            case PLAYER.LEFT:
+            case PLAYER.RIGHT:
+            default:
+                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                break;
+            }
+        }
+
+        return {
+            x,
+            y
+        };
+    }
+
     insert(tile) {
-        if (this.inputEnabled) {
+        this.tileArray.push(tile);
+    }
+
+    remove(tile) {
+        const index = this.tileArray.indexOf(tile);
+        this.tileArray.splice(index, 1);
+
+        return tile;
+    }
+}
+
+export class Hand {
+    constructor(inputEnabled) {
+        this.hiddenTileSet = new TileSet(inputEnabled);
+        this.exposedTileSetArray = [];
+    }
+
+    getLength() {
+        let length = 0;
+
+        length += this.hiddenTileSet.getLength();
+        for (const group of this.exposedTileSetArray) {
+            length += group.getLength();
+        }
+
+        return length;
+    }
+
+    // Return hand as simple array of tiles
+    getTileArray() {
+        let temp = [];
+
+        temp = temp.concat(this.hiddenTileSet.getTileArray());
+
+        for (const group of this.exposedTileSetArray) {
+            temp = temp.concat(group.getTileArray());
+        }
+
+        return temp;
+    }
+
+    isAllHidden() {
+        let length = 0;
+
+        for (const group of this.exposedTileSetArray) {
+            length += group.getLength();
+        }
+
+        if (length === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    reset() {
+        // Reset hand - return all tiles to wall
+        this.hiddenTileSet.reset();
+
+        for (const group of this.exposedTileSetArray) {
+            group.reset();
+        }
+    }
+
+    showHand(playerInfo) {
+        // Calculate positions for all tiles in hand
+        let x = playerInfo.x;
+        let y = playerInfo.y;
+
+        // Display all groups of tiles
+        ({x, y} = this.hiddenTileSet.showGroup(playerInfo, x, y));
+
+        for (const group of this.exposedTileSetArray) {
+            // Separate hidden and exposed tiles
+            switch (playerInfo.id) {
+            case PLAYER.BOTTOM:
+                x += SPRITE_WIDTH;
+                break;
+            case PLAYER.TOP:
+                x += SPRITE_WIDTH * SPRITE_SCALE_X;
+                break;
+            case PLAYER.LEFT:
+            case PLAYER.RIGHT:
+            default:
+                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                break;
+            }
+
+            ({x, y} = group.showGroup(playerInfo, x, y));
+        }
+    }
+
+    resetSelection() {
+        this.hiddenTileSet.resetSelection();
+
+        for (const group of this.exposedTileSetArray) {
+            group.resetSelection();
+        }
+    }
+
+    // Return selected tiles from hidden group
+    //  - will not remove from hand
+    //  - will not unselect
+    getSelectionHidden() {
+        return this.hiddenTileSet.getSelection();
+    }
+
+    sortRankHidden() {
+        this.resetSelection();
+        this.hiddenTileSet.sortRank();
+    }
+
+    sortSuitHidden() {
+        this.resetSelection();
+        this.hiddenTileSet.sortSuit();
+    }
+
+    insertHidden(tile) {
+        if (this.hiddenTileSet.inputEnabled) {
             tile.sprite.inputEnabled = true;
             tile.sprite.events.onInputDown.add(
                 (sprite) => {
@@ -198,21 +291,21 @@ export class Hand {
                     if (maxSelect) {
                         if (tile.selected) {
                             sprite.y += 25;
-                            this.selectCount--;
+                            this.hiddenTileSet.selectCount--;
                             tile.selected = !tile.selected;
-                        } else if (this.selectCount < maxSelect) {
+                        } else if (this.hiddenTileSet.selectCount < maxSelect) {
                             let bSelectOk = true;
 
                             if (gGameLogic.state === STATE.LOOP_EXPOSE_TILES) {
                                 // Selected tile must be a match for discardTile (or a joker) to form a pong/kong/quint
-                                if (tile.suit !== SUIT.JOKER && 
+                                if (tile.suit !== SUIT.JOKER &&
                                     (tile.suit !== gGameLogic.discardTile.suit || tile.number !== gGameLogic.discardTile.number)) {
                                     bSelectOk = false;
                                     gGameLogic.displayErrorText(" Select same tile or joker to form pong/kong/quint ");
                                 }
                             }
 
-                            if (gGameLogic.state === STATE.CHARLESTON1 || gGameLogic.state === STATE.CHARLESTON2 || 
+                            if (gGameLogic.state === STATE.CHARLESTON1 || gGameLogic.state === STATE.CHARLESTON2 ||
                                 gGameLogic.state === STATE.COURTESY) {
                                 if (tile.suit === SUIT.JOKER) {
                                     bSelectOk = false;
@@ -222,12 +315,12 @@ export class Hand {
 
                             if (bSelectOk) {
                                 sprite.y -= 25;
-                                this.selectCount++;
+                                this.hiddenTileSet.selectCount++;
                                 tile.selected = !tile.selected;
                             }
                         }
 
-                        if (this.selectCount > maxSelect || this.selectCount < minSelect) {
+                        if (this.hiddenTileSet.selectCount > maxSelect || this.hiddenTileSet.selectCount < minSelect) {
                             window.document.getElementById("button1").disabled = true;
                         } else {
                             window.document.getElementById("button1").disabled = false;
@@ -236,40 +329,33 @@ export class Hand {
                 }
             );
         }
-        this.hiddenTileArray.push(tile);
+        this.hiddenTileSet.insert(tile);
     }
 
-    remove(tile) {
-        if (this.inputEnabled) {
+    removeHidden(tile) {
+        if (this.hiddenTileSet.inputEnabled) {
             tile.selected = false;
             tile.sprite.events.onInputDown.removeAll();
             tile.sprite.inputEnabled = false;
         }
 
-        // Remove tile from hand
-        const index = this.hiddenTileArray.indexOf(tile);
-        this.hiddenTileArray.splice(index, 1);
-
-        return tile;
+        // Remove tile from hidden tile set
+        return this.hiddenTileSet.remove(tile);
     }
 
     insertExposed(tileArray) {
+        // Create new "exposed" TileSet
+        const tileSet = new TileSet(true);
+
         for (const tile of tileArray) {
-            if (this.inputEnabled) {
-                tile.selected = false;
-                tile.sprite.events.onInputDown.removeAll();
-                tile.sprite.inputEnabled = false;
-            }
-            this.exposedTileArray.push(tile);
+            tile.selected = false;
+            tile.sprite.events.onInputDown.removeAll();
+            tile.sprite.inputEnabled = false;
+            tileSet.insert(tile);
         }
-    }
 
-    removeExposed(tile) {
-        // Remove tile from hand
-        const index = this.exposedTileArray.indexOf(tile);
-        this.exposedTileArray.splice(index, 1);
-
-        return tile;
+        // Add new TileSet to "exposed" TileSet array
+        this.exposedTileSetArray.push(tileSet);
     }
 
     insertCharlestonPass(pass) {
@@ -279,30 +365,27 @@ export class Hand {
     }
 
     removeCharlestonPass() {
-        const pass = [];
-        if (this.inputEnabled) {
+        let pass = [];
+        if (this.hiddenTileSet.inputEnabled) {
 
             // Player 0 (human) pressed "Pass" button
-            for (const tile of this.hiddenTileArray) {
-                // Find 3 tiles picked by player 0 (human)
-                if (tile.selected) {
-                    pass.push(tile);
-                }
-            }
-
-            // Remove from hand
-            for (const tile of pass) {
-                this.remove(tile);
-            }
+            // Get 3 tiles picked by player 0 (human)
+            pass = this.hiddenTileSet.getSelection();
 
             // Reset selectCount
-            this.selectCount = 0;
+            this.hiddenTileSet.resetSelection();
+
+            // Remove from tile set
+            for (const tile of pass) {
+                this.hiddenTileSet.remove(tile);
+            }
+
         } else {
             // Player 1-3
-            // Todo - for now, just pick any 3 tiles. Need better logic
-            pass.push(this.remove(this.hiddenTileArray[0]));
-            pass.push(this.remove(this.hiddenTileArray[0]));
-            pass.push(this.remove(this.hiddenTileArray[0]));
+            // TODO - for now, just pick any 3 tiles. Need better logic
+            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
+            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
+            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
         }
 
         return pass;
@@ -321,29 +404,25 @@ export class Hand {
     }
 
     removeCourtesyPass(maxCount) {
-        const pass = [];
-        if (this.inputEnabled) {
+        let pass = [];
+        if (this.hiddenTileSet.inputEnabled) {
 
             // Player 0 (human) pressed "Pass" button
-            for (const tile of this.hiddenTileArray) {
-                // Find tiles picked by player 0 (human)
-                if (tile.selected) {
-                    pass.push(tile);
-                }
-            }
-
-            // Remove from hand
-            for (const tile of pass) {
-                this.remove(tile);
-            }
+            pass = this.hiddenTileSet.getSelection();
 
             // Reset selectCount
-            this.selectCount = 0;
+            this.hiddenTileSet.resetSelection();
+
+            // Remove from tile set
+            for (const tile of pass) {
+                this.hiddenTileSet.remove(tile);
+            }
+
         } else {
             // Player 1-3
             // Todo - for now, just pick any maxCount tiles. Need better logic
             for (let i = 0; i < maxCount; i++) {
-                pass.push(this.remove(this.hiddenTileArray[0]));
+                pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
             }
         }
 
@@ -353,24 +432,19 @@ export class Hand {
     removeDiscard() {
         let tile = null;
 
-        if (this.inputEnabled) {
+        if (this.hiddenTileSet.inputEnabled) {
             // Human player (0) pressed the discard button
-            for (tile of this.hiddenTileArray) {
-                // Find tiles picked by player 0 (human)
-                if (tile.selected) {
-                    break;
-                }
-            }
+            const selectedTiles = this.hiddenTileSet.getSelection();
+            tile = selectedTiles[0];
+
+            // Reset selectCount
+            this.hiddenTileSet.resetSelection();
         } else {
             // Todo - for now, just return first tile.  need better algorithm
-            tile = this.hiddenTileArray[0];
+            tile = this.hiddenTileSet.tileArray[0];
         }
-
-        // Remove tile from hand
-        this.remove(tile);
-
-        // Reset selectCount
-        this.selectCount = 0;
+        // Remove tile from tile set
+        this.removeHidden(tile);
 
         return tile;
     }
