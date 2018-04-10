@@ -20,7 +20,7 @@ class TileSet {
         return this.tileArray.length;
     }
 
-    // Return group as simple array of tiles
+    // Return tileset as simple array of tiles
     getTileArray() {
         const temp = [];
 
@@ -32,7 +32,7 @@ class TileSet {
     }
 
     reset(wall) {
-        // Reset group - return all tiles to wall
+        // Reset tileset - return all tiles to wall
         while (this.tileArray.length) {
             wall.insert(this.remove(this.tileArray[0]));
         }
@@ -98,7 +98,7 @@ class TileSet {
     }
 
     // Returns updated x, y
-    showGroup(playerInfo, posX, posY) {
+    showTileSet(playerInfo, posX, posY) {
 
         let x = posX;
         let y = posY;
@@ -140,6 +140,12 @@ class TileSet {
     }
 
     remove(tile) {
+
+        if (this.inputEnabled) {
+            tile.selected = false;
+            tile.sprite.events.onInputDown.removeAll();
+            tile.sprite.inputEnabled = false;
+        }        
         const index = this.tileArray.indexOf(tile);
         this.tileArray.splice(index, 1);
 
@@ -157,8 +163,8 @@ export class Hand {
         let length = 0;
 
         length += this.hiddenTileSet.getLength();
-        for (const group of this.exposedTileSetArray) {
-            length += group.getLength();
+        for (const tileset of this.exposedTileSetArray) {
+            length += tileset.getLength();
         }
 
         return length;
@@ -170,8 +176,8 @@ export class Hand {
 
         temp = temp.concat(this.hiddenTileSet.getTileArray());
 
-        for (const group of this.exposedTileSetArray) {
-            temp = temp.concat(group.getTileArray());
+        for (const tileset of this.exposedTileSetArray) {
+            temp = temp.concat(tileset.getTileArray());
         }
 
         return temp;
@@ -180,8 +186,8 @@ export class Hand {
     isAllHidden() {
         let length = 0;
 
-        for (const group of this.exposedTileSetArray) {
-            length += group.getLength();
+        for (const tileset of this.exposedTileSetArray) {
+            length += tileset.getLength();
         }
 
         if (length === 0) {
@@ -195,8 +201,8 @@ export class Hand {
         // Reset hand - return all tiles to wall
         this.hiddenTileSet.reset(wall);
 
-        for (const group of this.exposedTileSetArray) {
-            group.reset(wall);
+        for (const tileset of this.exposedTileSetArray) {
+            tileset.reset(wall);
         }
     }
 
@@ -205,10 +211,10 @@ export class Hand {
         let x = playerInfo.x;
         let y = playerInfo.y;
 
-        // Display all groups of tiles
-        ({x, y} = this.hiddenTileSet.showGroup(playerInfo, x, y));
+        // Display all tilesets
+        ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y));
 
-        for (const group of this.exposedTileSetArray) {
+        for (const tileset of this.exposedTileSetArray) {
             // Separate hidden and exposed tiles
             switch (playerInfo.id) {
             case PLAYER.BOTTOM:
@@ -224,15 +230,15 @@ export class Hand {
                 break;
             }
 
-            ({x, y} = group.showGroup(playerInfo, x, y));
+            ({x, y} = tileset.showTileSet(playerInfo, x, y));
         }
     }
 
     resetSelection() {
         this.hiddenTileSet.resetSelection();
 
-        for (const group of this.exposedTileSetArray) {
-            group.resetSelection();
+        for (const tileset of this.exposedTileSetArray) {
+            tileset.resetSelection();
         }
     }
 
@@ -333,12 +339,6 @@ export class Hand {
     }
 
     removeHidden(tile) {
-        if (this.hiddenTileSet.inputEnabled) {
-            tile.selected = false;
-            tile.sprite.events.onInputDown.removeAll();
-            tile.sprite.inputEnabled = false;
-        }
-
         // Remove tile from hidden tile set
         return this.hiddenTileSet.remove(tile);
     }
@@ -348,9 +348,6 @@ export class Hand {
         const tileSet = new TileSet(true);
 
         for (const tile of tileArray) {
-            tile.selected = false;
-            tile.sprite.events.onInputDown.removeAll();
-            tile.sprite.inputEnabled = false;
             tileSet.insert(tile);
         }
 
