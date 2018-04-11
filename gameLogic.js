@@ -365,9 +365,8 @@ export class GameLogic {
                     const button2 = window.document.getElementById("button2");
                     button2.removeEventListener("click", this.button2Function);
                     this.button2Function = function () {
-                        // TODO - exchange joker and tile
-                        // Unselect any tiles
-                        this.table.players[this.currPlayer].hand.resetSelection();
+                        this.table.exchangeUserSelectedTileForExposedJoker();
+                        window.document.getElementById("button2").disabled = true;
 
                         // Do not resolve() - must still discard
                     }.bind(this);

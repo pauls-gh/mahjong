@@ -304,4 +304,41 @@ export class Table {
             winningPlayer
         };
     }
+
+    // Handle Exchange Joker button
+    // This will only be called if
+    // 1. User (player 0) has one tile selected
+    // 2. Player 0-3 has one joker selected in an exposure and tile is a match for that exposure.
+    exchangeUserSelectedTileForExposedJoker() {
+
+        // Get user's selected tile (also reset's selection of any tiles in hiddenTileArray)
+        const selectedTile = this.players[PLAYER.BOTTOM].hand.removeDiscard();
+        const text = selectedTile.getText();
+        printMessage("Player 0 exchanged " + text + " for joker\n");
+        
+        // Find player and exposed tileSet which has the selected joker
+        for (let i = 0; i < 4; i++) {
+            for (const tileset of this.players[i].hand.exposedTileSetArray) {
+                if (tileset.getSelectionCount() === 1) {
+                    // Get selected joker
+                    const selectionArray = tileset.getSelection();
+                    const joker = selectionArray[0];
+                    tileset.resetSelection();
+
+                    // Remove joker from exposure and place into hidden hand
+                    tileset.remove(joker);
+                    this.players[PLAYER.BOTTOM].hand.insertHidden(joker);
+
+                    // Put player 0's tile into exposure (replacing the joker).  Don't need to add input handler, so add directly to tileset.
+                    tileset.insert(selectedTile);
+                    break;
+                }
+            }
+        }
+
+        // Show all players hands
+        for (let i = 0; i < 4; i++) {
+            this.players[i].showHand();
+        }
+    }
 }
