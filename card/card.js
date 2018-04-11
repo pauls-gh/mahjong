@@ -111,7 +111,7 @@ export class Card {
         outerLoop:
         for (const group of this.validHandGroups) {
             // Validate hand
-            for (const validHand of group) {
+            for (const validHand of group.hands) {
 
                 this.debugTrace("Match hand: " + validHand.description + "\n");
 
@@ -298,6 +298,15 @@ export class Card {
         return match;
     }
 
+    rankCardHands(hand, tile) {
+
+    }
+
+    rankTiles(hand, tile, rankedCardHands) {
+
+    }
+    
+    
     debugPrint(str) {
         if (debug) {
             console.log(str);
