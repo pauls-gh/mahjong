@@ -1,5 +1,6 @@
 import {game, printMessage, printInfo} from "./game.js";
 import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND} from "./constants.js";
+import {GameAI} from "./gameAI.js";
 import {Card} from "./card/card.js";
 import {Tile} from "./gameObjects.js";
 import {Hand} from "./gameObjects_hand.js";
@@ -16,6 +17,7 @@ export class GameLogic {
         this.state = STATE.INIT;
         this.table = table;
         this.card = new Card();
+        this.gameAI = new GameAI();
         this.currPlayer = 0;
         this.button1Function = null;
         this.button2Function = null;
@@ -56,10 +58,6 @@ export class GameLogic {
         // INIT
         this.state = STATE.INIT;
         this.updateUI();
-
-        // Testing only
-        //this.card.test();
-
 
         // Start button
         const startButton = window.document.getElementById("start");
