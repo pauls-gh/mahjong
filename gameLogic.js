@@ -17,7 +17,7 @@ export class GameLogic {
         this.state = STATE.INIT;
         this.table = table;
         this.card = new Card();
-        this.gameAI = new GameAI();
+        this.gameAI = new GameAI(this.card);
         this.currPlayer = 0;
         this.button1Function = null;
         this.button2Function = null;
@@ -118,7 +118,6 @@ export class GameLogic {
 
             hand.insertHidden(new Tile(SUIT.JOKER, 0));            
             hand.insertHidden(new Tile(SUIT.JOKER, 0));            
-
         } 
 
         this.table.deal(hand);
@@ -390,7 +389,11 @@ export class GameLogic {
             // Create promise to return the discarded tile (async operation) 
             promise = new Promise(
                 (resolve) =>  {
-                    const discardedTile = this.table.players[this.currPlayer].hand.removeDiscard();
+                    //const discardedTile = this.table.players[this.currPlayer].hand.removeDiscard();
+                    const discardedTile = this.gameAI.chooseDiscard(this.table.players[this.currPlayer].hand);
+                    this.table.players[this.currPlayer].hand.removeHidden(discardedTile);
+                    this.table.players[this.currPlayer].hand.sortSuitHidden();
+
                     const text = discardedTile.getText();
                     printMessage("Player " + this.currPlayer + " discards " + text + " \n");
                     

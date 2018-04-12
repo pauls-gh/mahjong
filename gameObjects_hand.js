@@ -533,6 +533,7 @@ export class Hand {
     }
 
     // Remove selected tile and reset selection (hiddenTileSet only)
+    // NOTE - only call for PLAYER.BOTTOM (user)
     removeDiscard() {
         let tile = null;
 
@@ -543,9 +544,6 @@ export class Hand {
 
             // Reset selectCount
             this.hiddenTileSet.resetSelection();
-        } else {
-            // Todo - for now, just return first tile.  need better algorithm
-            tile = this.hiddenTileSet.tileArray[0];
         }
         // Remove tile from tile set
         this.removeHidden(tile);

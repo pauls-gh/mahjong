@@ -14,20 +14,6 @@ export class CardTest {
         this.card = card;
     }
 
-    printValidationInfo(info) {
-        if (!debug) {
-            return;
-        }
-        this.debugPrint("valid = " + info.valid + "\n");
-        this.debugPrint("tileCount = " + info.tileCount + "\n");
-        this.debugPrint("minNum = " + info.minNum + "\n");
-        let suitStr = "";
-        for (const suit of info.suits) {
-            suitStr += suit + ", ";
-        }
-        this.debugPrint("suit(s) = " + suitStr + "\n");
-    }
-
     // Create various hands and test against the valid hands described in the card
     test() {
 
@@ -54,7 +40,7 @@ export class CardTest {
             this.debugPrint("222 0000 111 7777 (2 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -81,7 +67,7 @@ export class CardTest {
             this.debugPrint("222 0000 111 7777 (2 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -108,7 +94,7 @@ export class CardTest {
             this.debugPrint("FF DDDD 2017 DDDD (2 or 3 suits)  2 suits\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -135,7 +121,7 @@ export class CardTest {
             this.debugPrint("FF DDDD 2017 DDDD (2 or 3 suits)  3 suits\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -162,7 +148,7 @@ export class CardTest {
             this.debugPrint("FF DDDD 2017 DDDD (2 or 3 suits)  3 suits, using jokers\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -189,7 +175,7 @@ export class CardTest {
             this.debugPrint("FFFF 2 44 666 8888 (1 suit)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -217,7 +203,7 @@ export class CardTest {
             this.debugPrint("22 44 666 8888 DDDD (3 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -246,7 +232,7 @@ export class CardTest {
             this.debugPrint("FF 1111 DDDD 1111 (3 suits, like numbers)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -277,7 +263,7 @@ export class CardTest {
             this.debugPrint("FFFF 4444 9999 13 (1 suit, lucky 13)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -307,7 +293,7 @@ export class CardTest {
             this.debugPrint("FFFF 4444 9999 13 (3 suit, lucky 13)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -334,7 +320,7 @@ export class CardTest {
             this.debugPrint("NNNNN DDDD 11111 (quints, any wind, any dragon, any number/suit)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -361,7 +347,7 @@ export class CardTest {
             this.debugPrint("NNNNN DDDD 11111 (quints, any wind, any dragon, any number/suit)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -391,7 +377,7 @@ export class CardTest {
             this.debugPrint("FF 11111 22 33333 11111 (1 suit, 3 consecutive numbers)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -421,7 +407,7 @@ export class CardTest {
             this.debugPrint("FF 1111 2222 3333 (3 suit, 3 consecutive numbers)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -451,7 +437,7 @@ export class CardTest {
             this.debugPrint("11 22 111 222 3333 (3 suit, 3 consecutive numbers)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -481,7 +467,7 @@ export class CardTest {
             this.debugPrint("111 22 333 DDD DDD (3 consecutive numbers, 3 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -511,7 +497,7 @@ export class CardTest {
             this.debugPrint("NNNN EEEE WWWW SS\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -540,7 +526,7 @@ export class CardTest {
             this.debugPrint(" NNNN DD DD DD SSSS (3 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -569,7 +555,7 @@ export class CardTest {
             this.debugPrint("11 NNN 11 SSS 1111  (3 suits, any like odds) \n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -597,7 +583,7 @@ export class CardTest {
             this.debugPrint("NN EE WW SS 11 11 11 (3 suits, like numbers) \n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -625,7 +611,7 @@ export class CardTest {
             this.debugPrint("11 22 33 44 55 66 77 (any 7 consecutive numbers in 1 suit) \n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -654,7 +640,7 @@ export class CardTest {
             this.debugPrint("11 33 55 77 99 11 11 (3 suits, like odd pairs in opposite 2 suits)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
@@ -683,7 +669,7 @@ export class CardTest {
             this.debugPrint("FF 2017 DD 2017 DD  (bams and craks only)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
-            this.printValidationInfo(validationInfo);
+            this.this.card.printValidationInfo(validationInfo);
 
         }
 
