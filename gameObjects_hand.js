@@ -194,6 +194,10 @@ export class Hand {
         return temp;
     }
 
+    getHiddenTileArray() {
+        return this.hiddenTileSet.getTileArray();
+    }
+
     isAllHidden() {
         let length = 0;
 

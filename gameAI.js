@@ -13,7 +13,9 @@ export class GameAI {
 
     rankTiles14(hand, rankCardHands) {
         const validInfo = this.card.validateHand14(hand);
-        const test = hand.getTileArray();
+
+        // Rank only the hidden tiles
+        const test = hand.getHiddenTileArray();
 
         return this.rankTiles(test, validInfo, rankCardHands);
     }
@@ -21,8 +23,9 @@ export class GameAI {
     rankTiles13(hand, singleTile, rankCardHands) {
         const validInfo = this.card.validateHand13(hand, singleTile);
 
+        // Rank only the hidden tiles
         // Consolidate hand + singleTile to test array
-        const test = hand.getTileArray();
+        const test = hand.getHiddenTileArray();
         if (singleTile) {
             test.push(singleTile);
         }
@@ -32,16 +35,16 @@ export class GameAI {
 
     // Rank tiles
     // Input
-    //  - hand (13 tiles)
-    //  - single tile
+    //  - test (hidden tile array of <= 13 tiles)
+    //  - validInfo
     //  - rankCardHands - array (unsorted) of ranked hands
     // Output
-    //  - sorted array of tiles  (14 elements). Most relevant => least relevant
+    //  - sorted array of tiles  (14 elements). least relevant => most relevant
     rankTiles(test, validInfo, rankCardHands) {
         const tileRankArray = [];
 
         // For each tile
-        for (let i = 0; i < 14; i++) {
+        for (let i = 0; i < test.length; i++) {
 
             // Make copy of test array
             const copyTest = [];
@@ -59,8 +62,9 @@ export class GameAI {
 
             // Compute rank for this tile
             // - compare delta in testRankArray and rankCardHands
+            // - don't discard tiles that would cause large negative deltas
             for (let j = 0; j < rankCardHands.length; j++) {
-                rank += (testRankArray[j].rank - rankCardHands[j].rank) * rankCardHands[j].rank;
+                rank += (testRankArray[j].rank - rankCardHands[j].rank);
             }
 
             const tileRank = {
@@ -71,15 +75,21 @@ export class GameAI {
             tileRankArray.push(tileRank);
         }
 
-        // Sort  (higher => lower)
+        // Sort  (higher => lower). We want to discard tiles that have the least negative impact.
         tileRankArray.sort((a, b) => b.rank - a.rank);
 
         return tileRankArray;
     }
 
-    printTileRankArray(tileRankArray) {
+    printTileRankArray(tileRankArray, elemCount) {
         this.debugPrint("Tile Rank Info\n");
-        for (const rankInfo of tileRankArray) {
+
+        let count = tileRankArray.length;
+        if (elemCount) {
+            count = Math.min(elemCount, count);
+        }
+        for (let i = 0; i < count; i++) {
+            const rankInfo = tileRankArray[i];
             this.debugPrint("Tile = " + rankInfo.tile.getText() + "\n");
             this.debugPrint("Rank = " + rankInfo.rank + "\n");
         }
@@ -94,7 +104,13 @@ export class GameAI {
         const rankCardHands = this.card.getRankArray14(hand);
         const tileRankArray = this.rankTiles14(hand, rankCardHands);
 
-        this.printTileRankArray(tileRankArray);
+
+        if (debug) {
+            this.debugPrint("****************")
+            this.card.sortRankArray(rankCardHands); 
+            this.card.printRankArray(rankCardHands, 3);
+            this.printTileRankArray(tileRankArray, 3);
+        };
 
         return tileRankArray[0].tile;
     }

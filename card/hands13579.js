@@ -5,7 +5,7 @@ import {SUIT} from "../constants.js";
 //      (E.g. single white dragon used as 0)
 
 export const hands13579 = {
-    groupDescription: "2017",
+    groupDescription: "13579",
     hands: [
         {
             description: "11 333 5555 777 99 (1 suit)",

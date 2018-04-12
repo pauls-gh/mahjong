@@ -544,14 +544,19 @@ export class Card {
     }
 
     sortRankArray(rankCardHands) {
-        rankCardHands.sort((a, b) => {
-            return b.rank - a.rank;
-        });
+        rankCardHands.sort((a, b) => b.rank - a.rank);
     }
 
-    printRankArray(rankCardHands) {
-        this.debugPrint("Rank Info\n");
-        for (const rankInfo of rankCardHands) {
+    printRankArray(rankCardHands, elemCount) {
+        this.debugPrint("Hand Rank Info\n");
+
+        let count = rankCardHands.length;
+        if (elemCount) {
+            count = Math.min(elemCount, count);
+        }
+
+        for (let i = 0; i < count; i++) {
+            const rankInfo = rankCardHands[i];
             this.debugPrint("Group = " + rankInfo.group.groupDescription + "\n");
             this.debugPrint("Hand = " + rankInfo.hand.description + "\n");
             this.debugPrint("Rank = " + rankInfo.rank + "\n");
