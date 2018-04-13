@@ -1,5 +1,5 @@
 import {gGameLogic} from "./game.js";
-import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND} from "./constants.js";
+import {STATE, PLAYER_OPTION, PLAYER, SUIT, VNUMBER, DRAGON, WIND} from "./constants.js";
 import {Tile} from "./gameObjects.js";
 
 // PRIVATE CONSTANTS
@@ -34,7 +34,7 @@ export class GameAI {
             const copyHand = hand.dupHand();
 
             // Replace tile with a bogus non-matchable tile
-            copyHand.hiddenTileSet.tileArray[i] = new Tile(-1, -1);
+            copyHand.hiddenTileSet.tileArray[i] = new Tile(SUIT.INVALID, VNUMBER.INVALID);
 
             // Get card rank array of copyHand
             const copyHandRankArray = this.card.rankHandArray14(copyHand);
@@ -204,6 +204,61 @@ export class GameAI {
             tileArray: [discardTile]
         };
     }
+
+    // Player AI
+    // Someone discarded a tile, decide whether to claim it.  Hand has 13 tiles.
+    // - Dup hand.  Form 14 card hand with discardTile
+    // - Check for Mahjong
+    // - Check for pong/kong/quint exposure with discardTile.
+    // - Otherwise, return discard
+    //
+    // Return
+    //    {playerOption, tileArray}
+    claimDiscard(player, discardTile) {
+        // Duplicate hand
+        const hand = gGameLogic.table.players[player].hand.dupHand();
+
+        // Form 14 tile hand with discardTile
+        hand.insertHidden(discardTile);
+
+        // Check for mahjong
+        const validInfo = this.card.validateHand14(hand);
+
+        if (validInfo.valid) {
+            // Mahjong!
+            return {
+                playerOption: PLAYER_OPTION.MAHJONG,
+                tileArray: null
+            };
+        }
+
+        // Check for pong/kong/quint
+        const rankCardHands = this.card.rankHandArray14(hand);
+        const rankInfo = rankCardHands[0];
+
+        // Allow exposure if we have already exposed, or hand rank is greater than a certain level
+        if (!hand.isAllHidden() || (!rankInfo.hand.concealed && rankInfo.rank > 55)) {
+            // Check components for the discarded tile
+            for (const compInfo of rankInfo.componentInfoArray) {
+                for (const tile of compInfo.tileArray) {
+                    if ((tile === discardTile) && (compInfo.tileArray.length === compInfo.component.count)) {
+                        // If it's part of a completed component => let's claim it for exposure
+                        return {
+                            playerOption: PLAYER_OPTION.EXPOSE_TILES,
+                            tileArray: compInfo.tileArray
+                        }
+                    }
+                }
+            }
+        }
+
+        // Do not claim discard
+        return {
+            playerOption: PLAYER_OPTION.DISCARD_TILE,
+            tileArray: [discardTile]
+        };
+    }
+
 
     debugPrint(str) {
         if (debug) {

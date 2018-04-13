@@ -67,7 +67,9 @@ export const SUIT = {
     VSUIT3: 9,
     VSUIT1_DRAGON: 10,
     VSUIT2_DRAGON: 11,
-    VSUIT3_DRAGON: 12
+    VSUIT3_DRAGON: 12,
+    // INVALID - for padding hand to 14 tiles
+    INVALID: 99
 }
 
 export const VNUMBER = {
@@ -79,7 +81,9 @@ export const VNUMBER = {
     CONSECUTIVE4: 13,
     CONSECUTIVE5: 14,
     CONSECUTIVE6: 15,
-    CONSECUTIVE7: 16
+    CONSECUTIVE7: 16,
+    // INVALID - for padding hand to 14 tiles
+    INVALID: 99
 }
 
 // Winds

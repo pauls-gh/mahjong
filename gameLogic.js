@@ -389,7 +389,6 @@ export class GameLogic {
             // Create promise to return the discarded tile (async operation) 
             promise = new Promise(
                 (resolve) =>  {
-                    //const discardedTile = this.table.players[this.currPlayer].hand.removeDiscard();
                     const resolveResult = this.gameAI.chooseDiscard(this.currPlayer );
 
                     if (resolveResult.playerOption === PLAYER_OPTION.DISCARD_TILE) {
@@ -425,14 +424,9 @@ export class GameLogic {
             // Create promise to return the claim info (async operation) 
             return  new Promise(
                 (resolve) =>  {
-                    // player       (1-3)
-
-                    // TODO - enhance to be able to pong/kong/quint and mahjong
-
-                    let tileArray = [];
-                    tileArray.push(discardTile);
-                    resolve({playerOption: PLAYER_OPTION.DISCARD_TILE,
-                        tileArray: tileArray});                        
+                    // player (1-3)
+                    const resolveResult = this.gameAI.claimDiscard(player, discardTile);
+                    resolve(resolveResult); 
                 }); 
         } else {
             // player 0  (PLAYER.BOTTOM)
