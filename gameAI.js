@@ -192,10 +192,10 @@ export class GameAI {
         gGameLogic.table.players[currPlayer].hand.removeHidden(discardTile);
         gGameLogic.table.players[currPlayer].hand.sortSuitHidden();
 
-        if (0) {
+        if (1) {
             this.debugPrint("****************")
-            this.card.sortRankArray(rankCardHands);
-            this.card.printRankArray(rankCardHands, 3);
+            this.card.sortHandRankArray(rankCardHands);
+            this.card.printHandRankArray(rankCardHands, 3);
             this.printTileRankArray(tileRankArray, 3);
         }
 

@@ -328,7 +328,8 @@ export class Card {
                 const rankInfo = {
                     group,
                     hand: validHand,
-                    rank: 0
+                    rank: 0,
+                    componentInfoArray: null
                 };
                 rankCardHands.push(rankInfo);
 
@@ -400,22 +401,25 @@ export class Card {
         }
 
         // Iterate over permutations of virtual suits
-        let rank = 0;
         for (const vsuitArray of permArray) {
 
             // Rank components of hand
-            const tempRank = this.rankComponents(test, validInfo, validHand, vsuitArray);
+            const rankComponentInfo = this.rankComponents(test, validInfo, validHand, vsuitArray);
 
             // Use maximum rank of all permutations
-            rank = Math.max(rank, tempRank);
+            if (rankComponentInfo.rank > rankInfo.rank) {
+                rankInfo.rank = rankComponentInfo.rank;
+                rankInfo.componentInfoArray = rankComponentInfo.componentInfoArray;
+            }
         }
-
-        rankInfo.rank += rank;
     }
 
     rankComponents(test, validInfo, validHand, vsuitArray) {
-        let rank = 0;
-
+        const rankComponentInfo = {
+            rank: 0,
+            // Array of component info (including tile array for each component found)
+            componentInfoArray: []      
+        }
 
         // If even/odd hand, find the tile number with most even/odd (char/bam/dot only)
         let maxOdd = 1;
@@ -428,7 +432,9 @@ export class Card {
                 case SUIT.CHAR:
                 case SUIT.BAM:
                 case SUIT.DOT:
-                    numberCount[tile.number]++;
+                    if (tile.number >= 0 && tile.number <= 9 ) {
+                        numberCount[tile.number]++;
+                    }
                     break;
                 default:
                     break;
@@ -458,6 +464,15 @@ export class Card {
             let compSuit = comp.suit;
             let compNum = comp.number;
 
+            // Component Info - return actual tiles representing the component.
+            // AI needs this for pong/kong/quint decisions
+            const componentInfo = {
+                component: comp,
+                tileArray: []
+            };
+
+            rankComponentInfo.componentInfoArray.push(componentInfo);
+            
             // Translate virtual suit to real suit using vsuitArray
             if (compSuit >= SUIT.VSUIT1_DRAGON) {
                 compNum = vsuitArray[compSuit - SUIT.VSUIT1_DRAGON];
@@ -487,6 +502,8 @@ export class Card {
                     if (tile.suit === compSuit && tile.number === compNum) {
                         // Found tile match
                         found = true;
+                        componentInfo.tileArray.push(tile);
+
                         // Remove tile from testCopy array
                         const index = testCopy.indexOf(tile);
                         testCopy.splice(index, 1);
@@ -518,19 +535,19 @@ export class Card {
 
             // Update rank based on number of matching tiles (count) with the component length (comp.count)
             // Each component is worth 100 * comp.count / 14.
-            rank += (100 * comp.count / 14) * (count / comp.count);
+            rankComponentInfo.rank += (100 * comp.count / 14) * (count / comp.count);
         }
 
-        this.debugTrace("rankComponents: rank = " + rank + "\n");
+        this.debugTrace("rankComponents: rank = " + rankComponentInfo.rank + "\n");
 
-        return rank;
+        return rankComponentInfo;
     }
 
-    sortRankArray(rankCardHands) {
+    sortHandRankArray(rankCardHands) {
         rankCardHands.sort((a, b) => b.rank - a.rank);
     }
 
-    printRankArray(rankCardHands, elemCount) {
+    printHandRankArray(rankCardHands, elemCount) {
         this.debugPrint("Hand Rank Info\n");
 
         let count = rankCardHands.length;
@@ -543,6 +560,16 @@ export class Card {
             this.debugPrint("Group = " + rankInfo.group.groupDescription + "\n");
             this.debugPrint("Hand = " + rankInfo.hand.description + "\n");
             this.debugPrint("Rank = " + rankInfo.rank + "\n");
+
+            // Components
+            let str = "";
+            for (const compInfo of rankInfo.componentInfoArray) {
+                str += "[" + compInfo.component.count + "] ";
+                for (const tile of compInfo.tileArray) {
+                    str += tile.getText() + " ";
+                }
+            }
+            this.debugPrint(str);
         }
     }
 
