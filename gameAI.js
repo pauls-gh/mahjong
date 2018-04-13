@@ -34,8 +34,7 @@ export class GameAI {
             const copyHand = hand.dupHand();
 
             // Replace tile with a bogus non-matchable tile
-            copyHand.hiddenTileSet.tileArray.splice(i, 1);
-            copyHand.hiddenTileSet.tileArray.push(new Tile(-1, -1));
+            copyHand.hiddenTileSet.tileArray[i] = new Tile(-1, -1);
 
             // Get card rank array of copyHand
             const copyHandRankArray = this.card.rankHandArray14(copyHand);
@@ -80,13 +79,14 @@ export class GameAI {
     exchangeTilesForJokers(hand) {
         const exposedJokerArray = gGameLogic.table.getExposedJokerArray();
         const rankCardHands = this.card.rankHandArray14(hand);
-        const modified = false;
-        const bestRank = 0;
-        const bestTile = null;
+        let bestRank = -100000;
+        let bestTile = null;
 
         const test = hand.getHiddenTileArray();
-        for (const tile of test) {
 
+        // For each tile
+        for (let i = 0; i < test.length; i++) {
+            const tile = test[i];
             let jokerFound = false;
 
             // Does this tile have an exchangeable joker?
@@ -100,24 +100,42 @@ export class GameAI {
             if (!jokerFound) {
                 break;
             }
-            // Rank hand with a joker replacing the tile
-            const jokerHandTileArray = hand.getTileArray();
 
-            for (const temp of test) {
-                if (temp !== tile) {
-                    copyTest.push(temp);
-                }
+            // Rank hand with a joker replacing the tile
+            // - make copy of hand
+            // - replace tile with joker
+            const copyHand = hand.dupHand();
+            copyHand.hiddenTileSet.tileArray[i] = new Tile(SUIT.JOKER, 0);
+
+            // Get card rank array of copyHand
+            const copyHandRankArray = this.card.rankHandArray14(copyHand);
+            let rank = 0;
+
+            // Compute rank for this tile
+            // - compare delta in testRankArray and rankCardHands
+            // - don't discard tiles that would cause large negative deltas
+            for (let j = 0; j < rankCardHands.length; j++) {
+                rank += (copyHandRankArray[j].rank - rankCardHands[j].rank);
             }
 
-            copyTest.push(new Tile(SUIT.JOKER, 0));
+            this.debugPrint("exchangeTilesForJokers.  Joker found for exchange. rank = " + rank + "\n");
 
-            const validInfo = this.validateHand(test, hand.isAllHidden());
-            const testRankArray = this.card.rankHandArray14(copyHand);
-
-
+            if (rank > bestRank) {
+                bestRank = rank;
+                bestTile = tile;
+            }
         }
 
-        return modified;
+        if (bestTile && (bestRank > 0)) {
+            this.debugPrint("exchangeTilesForJokers. bestRank = " + bestRank + "\n");
+
+            // Hand improved with joker.  Make the exchange in the real hand.
+            gGameLogic.table.exchangeJoker(hand, bestTile);
+
+            return true;
+        }
+
+        return false;
     }
 
     // Player AI
@@ -147,9 +165,9 @@ export class GameAI {
 
         // Exchange jokers (if possible and it improves hand)
 
-        const modified = false;
+        let modified = false;
         do {
-            // PS TEST modified = this.exchangeTilesForJokers(hand);
+            modified = this.exchangeTilesForJokers(hand);
 
             if (modified) {
                 // Check for mahjong again
@@ -174,7 +192,7 @@ export class GameAI {
         gGameLogic.table.players[currPlayer].hand.removeHidden(discardTile);
         gGameLogic.table.players[currPlayer].hand.sortSuitHidden();
 
-        if (debug) {
+        if (0) {
             this.debugPrint("****************")
             this.card.sortRankArray(rankCardHands);
             this.card.printRankArray(rankCardHands, 3);

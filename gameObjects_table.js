@@ -315,7 +315,7 @@ export class Table {
         const selectedTile = this.players[PLAYER.BOTTOM].hand.removeDiscard();
         const text = selectedTile.getText();
         printMessage("Player 0 exchanged " + text + " for joker\n");
-        
+
         // Find player and exposed tileSet which has the selected joker
         for (let i = 0; i < 4; i++) {
             for (const tileset of this.players[i].hand.exposedTileSetArray) {
@@ -343,7 +343,7 @@ export class Table {
     }
 
 
-    // Search all player's exposed tilesets containing joker(s) 
+    // Search all player's exposed tilesets containing joker(s)
     // Return array of unique tiles that can be swapped for jokers
     getExposedJokerArray() {
         const tileArray = [];
@@ -365,12 +365,56 @@ export class Table {
                     for (const tile of tileset.tileArray) {
                         if (tile.suit === SUIT.JOKER) {
                             tileArray.push(uniqueTile);
-                        } 
+                        }
                     }
                 }
             }
         }
 
         return tileArray;
+    }
+
+    // Swap given tile with an exposed joker
+    // Input
+    // - hand
+    // - tile (contained in hand, known to match an exposed pong/kong/quint with joker)
+    // Output
+    // - replace tile with joker in hand
+    // - exposed pong/kong/quint replace joker with tile
+    exchangeJoker(hand, swapTile) {
+        outerLoop:
+        for (let i = 0; i < 4; i++) {
+            for (const tileset of this.players[i].hand.exposedTileSetArray) {
+
+                // Find unique tile in pong/kong/quint (i.e. non-joker)
+                let uniqueTile = null;
+                for (const tile of tileset.tileArray) {
+                    if (tile.suit !== SUIT.JOKER) {
+                        uniqueTile = tile;
+                        break;
+                    }
+                }
+
+                // If pong/kong/quint matches swapTile, exchange joker (if any)
+                if (uniqueTile && (uniqueTile.suit === swapTile.suit) &&
+                    (uniqueTile.number === swapTile.number)) {
+
+                    for (const tile of tileset.tileArray) {
+                        if (tile.suit === SUIT.JOKER) {
+                            // Exchange swapTile
+                            hand.removeHidden(swapTile);
+                            tileset.insert(swapTile);
+
+                            // Exchange joker
+                            tileset.remove(tile);
+                            hand.insertHidden(tile);
+
+                            break outerLoop;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
