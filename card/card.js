@@ -77,13 +77,6 @@ export class Card {
             allHidden
         };
 
-        // Validate number of tiles
-        info.tileCount = test.length;
-
-        if (info.tileCount !== 14) {
-            return info;
-        }
-
         // Determine all suits  (dragons will be translated to char, bam, dot)
         for (const tile of test) {
             let suit = tile.suit;
@@ -105,6 +98,13 @@ export class Card {
             }
         }
         info.minNum = minNum;
+
+        // Validate number of tiles
+        info.tileCount = test.length;
+
+        if (info.tileCount !== 14) {
+            return info;
+        }        
 
         // Compare against all possible hands
         let found = false;
@@ -284,7 +284,7 @@ export class Card {
                     }
                 }
 
-            } while (found && count < comp.count);
+            } while (found && (count < comp.count));
 
             if (count === comp.count) {
                 this.debugTrace("Component Match: yes\n");
@@ -314,30 +314,13 @@ export class Card {
         this.debugPrint("suit(s) = " + suitStr + "\n");
     }
 
-    getRankArray14(hand) {
+    // Given hand (must be 14 tiles), rank against all card hands
+    rankHandArray14(hand) {
         const validInfo = this.validateHand14(hand);
-
+        const rankCardHands = [];
+        
         // Consolidate hand to test array
         const test = hand.getTileArray();
-
-        return this.getRankArray(test, validInfo);
-    }
-
-    getRankArray13(hand, singleTile) {
-        const validInfo = this.validateHand13(hand, singleTile);
-
-        // Consolidate hand + singleTile to test array
-        const test = hand.getTileArray();
-        if (singleTile) {
-            test.push(singleTile);
-        }
-
-        return this.getRankArray(test, validInfo);
-    }
-
-    // Given test tile array, rank against all card hands
-    getRankArray(test, validInfo) {
-        const rankCardHands = [];
 
         for (const group of this.validHandGroups) {
             for (const validHand of group.hands) {
@@ -534,8 +517,8 @@ export class Card {
             } while (found && count < comp.count);
 
             // Update rank based on number of matching tiles (count) with the component length (comp.count)
-            // Scale according to number of components
-            rank += (100 / validHand.components.length) * (count / comp.count);
+            // Each component is worth 100 * comp.count / 14.
+            rank += (100 * comp.count / 14) * (count / comp.count);
         }
 
         this.debugTrace("rankComponents: rank = " + rank + "\n");

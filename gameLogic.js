@@ -390,18 +390,13 @@ export class GameLogic {
             promise = new Promise(
                 (resolve) =>  {
                     //const discardedTile = this.table.players[this.currPlayer].hand.removeDiscard();
-                    const discardedTile = this.gameAI.chooseDiscard(this.table.players[this.currPlayer].hand);
-                    this.table.players[this.currPlayer].hand.removeHidden(discardedTile);
-                    this.table.players[this.currPlayer].hand.sortSuitHidden();
+                    const resolveResult = this.gameAI.chooseDiscard(this.currPlayer );
 
-                    const text = discardedTile.getText();
-                    printMessage("Player " + this.currPlayer + " discards " + text + " \n");
-                    
-                    let tileArray = [];
-                    tileArray.push(discardedTile);
-
-                    resolve({playerOption: PLAYER_OPTION.DISCARD_TILE,
-                        tileArray: tileArray});                    
+                    if (resolveResult.playerOption === PLAYER_OPTION.DISCARD_TILE) {
+                        const text = resolveResult.tileArray[0].getText();
+                        printMessage("Player " + this.currPlayer + " discards " + text + " \n");
+                    }
+                    resolve(resolveResult);                    
                 });
         }
 

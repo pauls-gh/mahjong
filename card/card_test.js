@@ -353,7 +353,7 @@ export class CardTest {
 
         {
 
-            // FF 11111 22 33333 11111 (1 suit, 3 consecutive numbers)
+            // FF 11111 22 33333 (1 suit, 3 consecutive numbers)
             const hand = new Hand(false);
             hand.insertHidden(new Tile(SUIT.FLOWER, 0));
             hand.insertHidden(new Tile(SUIT.FLOWER, 0));
@@ -374,7 +374,7 @@ export class CardTest {
 
             const singleTile = new Tile(SUIT.CHAR, 5);
 
-            this.debugPrint("FF 11111 22 33333 11111 (1 suit, 3 consecutive numbers)\n");
+            this.debugPrint("FF 11111 22 33333 (1 suit, 3 consecutive numbers)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
             this.this.card.printValidationInfo(validationInfo);

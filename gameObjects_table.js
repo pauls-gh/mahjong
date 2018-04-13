@@ -1,6 +1,6 @@
 import {game, printMessage} from "./game.js";
 import {
-    PLAYER, PLAYER_OPTION,
+    PLAYER, PLAYER_OPTION, SUIT,
     WINDOW_WIDTH, WINDOW_HEIGHT,
     SPRITE_HEIGHT, SPRITE_SCALE_Y
 } from "./constants.js";
@@ -340,5 +340,37 @@ export class Table {
         for (let i = 0; i < 4; i++) {
             this.players[i].showHand();
         }
+    }
+
+
+    // Search all player's exposed tilesets containing joker(s) 
+    // Return array of unique tiles that can be swapped for jokers
+    getExposedJokerArray() {
+        const tileArray = [];
+
+        for (let i = 0; i < 4; i++) {
+            for (const tileset of this.players[i].hand.exposedTileSetArray) {
+
+                // Find unique tile in pong/kong/quint (i.e. non-joker)
+                let uniqueTile = null;
+                for (const tile of tileset.tileArray) {
+                    if (tile.suit !== SUIT.JOKER) {
+                        uniqueTile = tile;
+                        break;
+                    }
+                }
+
+                // For each joker in pong/kong/quint, return the unique tile
+                if (uniqueTile) {
+                    for (const tile of tileset.tileArray) {
+                        if (tile.suit === SUIT.JOKER) {
+                            tileArray.push(uniqueTile);
+                        } 
+                    }
+                }
+            }
+        }
+
+        return tileArray;
     }
 }

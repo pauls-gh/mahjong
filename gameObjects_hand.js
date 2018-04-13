@@ -168,6 +168,27 @@ export class Hand {
     constructor(inputEnabled) {
         this.hiddenTileSet = new TileSet(inputEnabled);
         this.exposedTileSetArray = [];
+        // When adding new variables, make sure to update dupHand()
+    }
+
+    // Duplicate hand
+    // - hiddenTileSet and exposedTileSetArray can then be freely manipulated
+    dupHand() {
+        const newHand = new Hand(false);
+
+        for (const tile of this.hiddenTileSet.tileArray) {
+            newHand.hiddenTileSet.tileArray.push(tile);
+        }
+
+        for (const tileset of this.exposedTileSetArray) {
+            const newTileSet = new TileSet(false);
+            for (const tile of tileset) {
+                newTileSet.insert(tile);
+            }
+            newHand.exposedTileSetArray.push(newTileSet);
+        }        
+
+        return newHand;
     }
 
     getLength() {

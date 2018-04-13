@@ -320,7 +320,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "FF 11111 22 33333 11111 (1 suit, 3 consecutive numbers)",
+            description: "FF 11111 22 33333 (1 suit, 3 consecutive numbers)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
