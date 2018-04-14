@@ -22,8 +22,7 @@ export class GameAI {
         copyHand.insertHidden(invalidTile);
 
         // Rank tiles
-        const rankCardHands = this.card.rankHandArray14(copyHand);
-        const tileRankArray = this.rankTiles14(copyHand, rankCardHands);
+        const tileRankArray = this.rankTiles14(copyHand);
 
         // Remove invalid tile
         for (let i = 0; i < tileRankArray.length; i++) {
@@ -44,7 +43,8 @@ export class GameAI {
     //  - rankCardHands - array (unsorted) of ranked hands
     // Output
     //  - sorted array of {hidden tile, rank}  (<=13 elements). least relevant => most relevant
-    rankTiles14(hand, rankCardHands) {
+    rankTiles14(hand) {
+        const rankCardHands = this.card.rankHandArray14(hand);
         const tileRankArray = [];
 
         // Rank only the hidden tiles
@@ -68,7 +68,12 @@ export class GameAI {
             // - compare delta in testRankArray and rankCardHands
             // - don't discard tiles that would cause large negative deltas
             for (let j = 0; j < rankCardHands.length; j++) {
-                rank += (copyHandRankArray[j].rank - rankCardHands[j].rank) * rankCardHands[j].rank;
+                let scale = 1.0;
+                if (rankCardHands[j].rank > 50) {
+                    // Weight high ranking hands more heavily
+                    scale = rankCardHands[j].rank;
+                }
+                rank += (copyHandRankArray[j].rank - rankCardHands[j].rank) * scale;
             }
 
             const tileRank = {
@@ -81,6 +86,14 @@ export class GameAI {
 
         // Sort  (higher => lower). We want to discard tiles that have the least negative impact.
         tileRankArray.sort((a, b) => b.rank - a.rank);
+
+        //PS TEST 
+        if (debug) {
+            this.debugPrint("****************");
+            this.card.sortHandRankArray(rankCardHands);
+            this.card.printHandRankArray(rankCardHands, 3);
+            this.printTileRankArray(tileRankArray, 3);
+        }
 
         return tileRankArray;
     }
@@ -163,7 +176,7 @@ export class GameAI {
     }
 
     // Player AI
-    // Just picked a new tile from wall.  Hand has 14 tiles.
+    // Just picked a new tile from wall (or completed exposure).  Hand has 14 tiles.
     // - Check for Mahjong
     // - Exchange for jokers (if possible and it would improve hand)
     // - Mahjong (if possible)
@@ -208,20 +221,12 @@ export class GameAI {
         } while (modified);
 
         // Choose tile to discard
-        const rankCardHands = this.card.rankHandArray14(hand);
-        const tileRankArray = this.rankTiles14(hand, rankCardHands);
+        const tileRankArray = this.rankTiles14(hand);
         const discardTile = tileRankArray[0].tile;
 
         // Remove tile from player's hidden tiles
         this.table.players[currPlayer].hand.removeHidden(discardTile);
         this.table.players[currPlayer].hand.sortSuitHidden();
-
-        if (1) {
-            this.debugPrint("****************")
-            this.card.sortHandRankArray(rankCardHands);
-            this.card.printHandRankArray(rankCardHands, 3);
-            this.printTileRankArray(tileRankArray, 3);
-        }
 
         return {
             playerOption: PLAYER_OPTION.DISCARD_TILE,
@@ -266,7 +271,8 @@ export class GameAI {
             // Check components for the discarded tile
             for (const compInfo of rankInfo.componentInfoArray) {
                 for (const tile of compInfo.tileArray) {
-                    if ((tile === discardTile) && (compInfo.tileArray.length === compInfo.component.count)) {
+                    if ((tile === discardTile) && (compInfo.component.count >= 3) &&
+                     (compInfo.tileArray.length === compInfo.component.count)) {
                         // If it's part of a completed component => let's claim it for exposure
                         return {
                             playerOption: PLAYER_OPTION.EXPOSE_TILES,
@@ -291,8 +297,6 @@ export class GameAI {
         // Player 1-3 will only have 13 tiles in their hands during the Charleston
         // Add a bogus tile to make 14.
         const tileRankArray = this.rankTiles13(this.table.players[player].hand)
-
-        this.printTileRankArray(tileRankArray, 3);
 
         // Pass tiles
         for (let i = 0; i < 3; i++) {

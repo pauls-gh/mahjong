@@ -95,37 +95,71 @@ export class GameLogic {
         this.updateUI();
 
         // Create hand for debugging / testing
-        const hand = new Hand(false);
+        const initPlayerHandArray = [null, null, null, null];
+
 
         if (1) {
+            // Player 0  (14 tiles)
+            const hand = new Hand(false);
+            initPlayerHandArray[0] = hand;
+
             // FF 1111 DDDD 1111 (3 suits, like numbers)
             hand.insertHidden(new Tile(SUIT.FLOWER, 0));
             hand.insertHidden(new Tile(SUIT.FLOWER, 0));
             hand.insertHidden(new Tile(SUIT.DOT, 4));
-            hand.insertHidden(new Tile(SUIT.DOT, 4));
-            hand.insertHidden(new Tile(SUIT.DOT, 4));
-            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            //hand.insertHidden(new Tile(SUIT.DOT, 4));
+           // hand.insertHidden(new Tile(SUIT.DOT, 4));
+            //hand.insertHidden(new Tile(SUIT.DOT, 4));
 
-            hand.insertHidden(new Tile(SUIT.BAM, 4));
-            hand.insertHidden(new Tile(SUIT.BAM, 4));
-            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            //hand.insertHidden(new Tile(SUIT.BAM, 4));
+            //hand.insertHidden(new Tile(SUIT.BAM, 4));
+            //hand.insertHidden(new Tile(SUIT.BAM, 4));
             hand.insertHidden(new Tile(SUIT.BAM, 4));
 
             hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
             //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
             //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));            
 
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
         } 
 
-        this.table.deal(hand);
+        if (1) {
+            // Player 1  (13 tiles)
+            const hand = new Hand(false);
+            initPlayerHandArray[1] = hand;
+
+            // FF 1111 DDDD 1111 (3 suits, like numbers)
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            //hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            //hand.insertHidden(new Tile(SUIT.DOT, 4));
+
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            //hand.insertHidden(new Tile(SUIT.BAM, 4));
+
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            
+            hand.insertHidden(new Tile(SUIT.DOT, 3));
+            hand.insertHidden(new Tile(SUIT.CHAR, 5));
+            hand.insertHidden(new Tile(SUIT.DOT, 6));
+
+            
+        }
+
+        this.table.deal(initPlayerHandArray);
 
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
         
         // debugging - skip charleston
-        if (0) {
+        if (1) {
             this.loop();
         } else {
             this.charleston();
@@ -190,7 +224,7 @@ export class GameLogic {
             // Wait for user to select courtesy pass tiles
             await this.courtesyPass();
         }
-        
+
         this.state = STATE.COURTESY_COMPLETE;
         this.updateUI();
 

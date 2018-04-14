@@ -118,29 +118,40 @@ export class Table {
         this.boxes[player].visible = true;
     }
 
-    deal(initPlayer0Hand) {
+    deal(initPlayerHandArray) {
         // Shuffle tiles
         this.wall.shuffle();
 
-        // Player 0 (user, dealer, 14 tiles)
-        for (let j = 0; j < 14; j++) {
-            let tile = null;
-            if (initPlayer0Hand.getLength()) {
-                // Init Player 0 hand with given tiles
-                // This is useful for testing / training mode
-                const findTile = initPlayer0Hand.hiddenTileSet.tileArray.pop();
-                tile = this.wall.findAndRemove(findTile);
-            } else {
-                tile = this.wall.remove();
-            }
-            this.players[0].hand.insertHidden(tile);
-        }
+        // Deal player hands. 
+        // Use initPlayerHandArray to pre-populate  (useful for testing/training mode)
+        // Note: pre-populate hand may be less than a full hand
+        for (let player = 0; player < 4; player++) {
+            const initPlayerHand = initPlayerHandArray[player];
 
-        // Deal tiles to players 1 - 3
-        for (let i = 1; i < 4; i++) {
-            for (let j = 0; j < 13; j++) {
+            if (!initPlayerHand) {
+                continue;
+            }
+            while (initPlayerHand.getLength()) {
+                // Init Player  hand with given tiles
+                // This is useful for testing / training mode
+                const findTile = initPlayerHand.hiddenTileSet.tileArray.pop();
+                const tile = this.wall.findAndRemove(findTile);
+                this.players[player].hand.insertHidden(tile);
+            }
+        }
+        
+        // Deal remainder of tiles from wall
+        for (let player = 0; player < 4; player++) {
+            let handLength = 13;
+            if (player === 0) {
+                handLength = 14;
+            }
+
+            // Init hand may be < 13 (or 14). 
+            const numRemainingTiles = handLength - this.players[player].hand.getLength();
+            for (let j = 0; j < numRemainingTiles; j++) {
                 const tile = this.wall.remove();
-                this.players[i].hand.insertHidden(tile);
+                this.players[player].hand.insertHidden(tile);
             }
         }
 
@@ -279,15 +290,14 @@ export class Table {
             // Expose winner's (discard+exposure) tiles
 
             // Adjust hand - remove tile from hidden and insert to exposed
+            // Note - one of these is the discarded tile and is not in the player's hand (i.e. removeHidden will fail on it)
             for (const tile of claimArray[winningPlayer].tileArray) {
-                this.players[winningPlayer].hand.removeHidden(tile);
+                if (tile !== discardTile) {
+                    this.players[winningPlayer].hand.removeHidden(tile);
+                }   
             }
 
-            // Make new copy of claimArray
-            let exposeTileArray = [];
-            exposeTileArray = exposeTileArray.concat(claimArray[winningPlayer].tileArray);
-            exposeTileArray.push(discardTile);
-            this.players[winningPlayer].hand.insertExposed(exposeTileArray);
+            this.players[winningPlayer].hand.insertExposed(claimArray[winningPlayer].tileArray);
         }
 
         this.players[winningPlayer].showHand();

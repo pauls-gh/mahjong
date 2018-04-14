@@ -317,7 +317,6 @@ export class Card {
     // Given hand (must be 14 tiles), rank against all card hands
     // Output:  rankCardHands array of rankInfo, NOT sorted by rank.  Inorder by group/hands.
     rankHandArray14(hand) {
-        const validInfo = this.validateHand14(hand);
         const rankCardHands = [];
 
         // Consolidate hand to test array
@@ -334,7 +333,7 @@ export class Card {
                 };
                 rankCardHands.push(rankInfo);
 
-                this.rankHand(test, rankInfo, validInfo, validHand);
+                this.rankHand(test, hand.isAllHidden(), rankInfo, validHand);
             }
         }
 
@@ -346,12 +345,11 @@ export class Card {
     // Input
     //  - test        - tile array of test hand
     //  - rankInfo    - rankInfo for test hand
-    //  - validInfo   - validInfo for test hand
     //  - validHand   - card hand
-    rankHand(test, rankInfo, validInfo, validHand) {
+    rankHand(test, isAllHidden, rankInfo, validHand) {
 
         // Rank is 0 if test hand has exposures and validHand is required to be concealed
-        if (validHand.concealed && !validInfo.allHidden) {
+        if (validHand.concealed && !isAllHidden) {
             rankInfo.rank = 0;
 
             return;
@@ -401,57 +399,53 @@ export class Card {
             break;
         }
 
-        // Iterate over permutations of virtual suits
-        for (const vsuitArray of permArray) {
+        // Determine if virtual number are used by any components
+        let bVirtualNumbers = false;
+        for (const comp of validHand.components) {
+            if (comp.number > 9) {
+                bVirtualNumbers = true;
+                break;
+            }
+        }
 
-            // Rank components of hand
-            const rankComponentInfo = this.rankComponents(test, validInfo, validHand, vsuitArray);
+        let start = 1;
+        let end = 1;
+        let delta = 1;
 
-            // Use maximum rank of all permutations
-            if (rankComponentInfo.rank > rankInfo.rank) {
-                rankInfo.rank = rankComponentInfo.rank;
-                rankInfo.componentInfoArray = rankComponentInfo.componentInfoArray;
+        if (bVirtualNumbers) {
+            end = 9;
+            if (validHand.odd) {
+                start = 1;
+                end = 9;
+                delta = 2;
+            } else if (validHand.even) {
+                start = 2;
+                end = 8;
+                delta = 2;
+            }
+        }
+
+        // Iterate over all potential starting numbers for CONSECUTIVE1
+        for (let minNum = start; minNum <= end; minNum += delta) {
+            // Iterate over permutations of virtual suits
+            for (const vsuitArray of permArray) {
+                // Rank components of hand
+                const rankComponentInfo = this.rankComponents(test, minNum, validHand, vsuitArray);
+
+                // Use maximum rank of all permutations
+                if (rankComponentInfo.rank > rankInfo.rank) {
+                    rankInfo.rank = rankComponentInfo.rank;
+                    rankInfo.componentInfoArray = rankComponentInfo.componentInfoArray;
+                }
             }
         }
     }
 
-    rankComponents(test, validInfo, validHand, vsuitArray) {
+    rankComponents(test, minNum, validHand, vsuitArray) {
         const rankComponentInfo = {
             rank: 0,
             // Array of component info (including tile array for each component found)
             componentInfoArray: []
-        }
-
-        // If even/odd hand, find the tile number with most even/odd (char/bam/dot only)
-        let maxOdd = 1;
-        let maxEven = 2;
-        if (validHand.even || validHand.odd) {
-            const numberCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-            for (const tile of test) {
-                switch (tile.suit) {
-                case SUIT.CHAR:
-                case SUIT.BAM:
-                case SUIT.DOT:
-                    if (tile.number >= 0 && tile.number <= 9) {
-                        numberCount[tile.number]++;
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-
-            for (let i = 1; i <= 9; i += 2) {
-                if (numberCount[i] > numberCount[maxOdd]) {
-                    maxOdd = i;
-                }
-            }
-            for (let i = 2; i <= 8; i += 2) {
-                if (numberCount[i] > numberCount[maxEven]) {
-                    maxEven = i;
-                }
-            }
         }
 
         // Make copy of test array
@@ -484,15 +478,7 @@ export class Card {
 
                 //  VNUMBER
                 if (compNum > 9) {
-                    if (validHand.even) {
-                        // Use most frequent even tile (char, bam, dot)
-                        compNum = maxEven;
-                    } else if (validHand.odd) {
-                        // Use most frequent odd tile (char, bam, dot)
-                        compNum = maxOdd;
-                    } else {
-                        compNum = validInfo.minNum + compNum - VNUMBER.CONSECUTIVE1;
-                    }
+                    compNum = minNum + compNum - VNUMBER.CONSECUTIVE1;
                 }
             }
             // Search testCopy for tiles that match components

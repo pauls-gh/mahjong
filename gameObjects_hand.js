@@ -158,7 +158,9 @@ class TileSet {
             tile.sprite.inputEnabled = false;
         }
         const index = this.tileArray.indexOf(tile);
-        this.tileArray.splice(index, 1);
+        if (index !== -1) {
+            this.tileArray.splice(index, 1);
+        }
 
         return tile;
     }
@@ -182,7 +184,7 @@ export class Hand {
 
         for (const tileset of this.exposedTileSetArray) {
             const newTileSet = new TileSet(false);
-            for (const tile of tileset) {
+            for (const tile of tileset.tileArray) {
                 newTileSet.insert(tile);
             }
             newHand.exposedTileSetArray.push(newTileSet);

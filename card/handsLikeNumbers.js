@@ -21,7 +21,7 @@ export const handsLikeNumbers = {
                 },
                 {
                     suit: SUIT.VSUIT1,
-                    number: VNUMBER.CONSECUTIVE1 | VNUMBER.LIKE,
+                    number: VNUMBER.CONSECUTIVE1,
                     count: 4
                 },
                 {
@@ -31,7 +31,7 @@ export const handsLikeNumbers = {
                 },
                 {
                     suit: SUIT.VSUIT3,
-                    number: VNUMBER.CONSECUTIVE1 | VNUMBER.LIKE,
+                    number: VNUMBER.CONSECUTIVE1,
                     count: 4
                 }
             ]
@@ -50,12 +50,12 @@ export const handsLikeNumbers = {
                 },
                 {
                     suit: SUIT.VSUIT1,
-                    number: VNUMBER.CONSECUTIVE1 | VNUMBER.LIKE,
+                    number: VNUMBER.CONSECUTIVE1,
                     count: 4
                 },
                 {
                     suit: SUIT.VSUIT2,
-                    number: VNUMBER.CONSECUTIVE1 | VNUMBER.LIKE,
+                    number: VNUMBER.CONSECUTIVE1,
                     count: 4
                 }
             ]
