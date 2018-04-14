@@ -178,28 +178,14 @@ export class Table {
         }
     }
 
-    courtesyVote(player0CourtesyVote) {
-
-        const player1CourtesyVote = this.players[1].hand.courtesyVote();
-        const player2CourtesyVote = this.players[2].hand.courtesyVote();
-        const player3CourtesyVote = this.players[3].hand.courtesyVote();
+    courtesyVote(courtesyVoteArray) {
 
         // Calculate actual courtesy count using voting from each player
-        this.player02CourtesyVote = Math.min(player0CourtesyVote, player2CourtesyVote);
-        this.player13CourtesyVote = Math.min(player1CourtesyVote, player3CourtesyVote);
+        this.player02CourtesyVote = Math.min(courtesyVoteArray[0], courtesyVoteArray[2]);
+        this.player13CourtesyVote = Math.min(courtesyVoteArray[1], courtesyVoteArray[3]);
     }
 
-    courtesyPass() {
-        const courtesyPassArray = [];
-
-        // Remove tiles (0-3) selected by human player
-        courtesyPassArray[PLAYER.BOTTOM] = this.players[PLAYER.BOTTOM].hand.removeCourtesyPass(this.player02CourtesyVote);
-        courtesyPassArray[PLAYER.TOP] = this.players[PLAYER.TOP].hand.removeCourtesyPass(this.player02CourtesyVote);
-
-        // Remove courtesy left/right players
-        courtesyPassArray[PLAYER.LEFT] = this.players[PLAYER.LEFT].hand.removeCourtesyPass(this.player13CourtesyVote);
-        courtesyPassArray[PLAYER.RIGHT] = this.players[PLAYER.RIGHT].hand.removeCourtesyPass(this.player13CourtesyVote);
-
+    courtesyPass(courtesyPassArray) {
         // Delta = player opposite
         const delta = 2;
 
@@ -210,11 +196,17 @@ export class Table {
             if (to > 3) {
                 to -= 4;
             }
-            this.players[to].hand.insertCourtesyPass(courtesyPassArray[from]);
+
+            for (const tile of courtesyPassArray[from]) {
+                this.players[to].hand.insertHidden(tile);
+            }            
         }
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {
+            if (i !== 0) {
+                this.players[i].hand.sortSuitHidden();
+            }            
             this.players[i].showHand();
         }
     }

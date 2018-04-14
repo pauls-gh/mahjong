@@ -486,44 +486,6 @@ export class Hand {
         }
     }
 
-    courtesyVote() {
-        // Todo - improve algorithm
-        return 3;
-    }
-
-
-    insertCourtesyPass(pass) {
-        for (const tile of pass) {
-            this.insert(tile);
-        }
-    }
-
-    removeCourtesyPass(maxCount) {
-        let pass = [];
-        if (this.hiddenTileSet.inputEnabled) {
-
-            // Player 0 (human) pressed "Pass" button
-            pass = this.hiddenTileSet.getSelection();
-
-            // Reset selectCount
-            this.hiddenTileSet.resetSelection();
-
-            // Remove from tile set
-            for (const tile of pass) {
-                this.hiddenTileSet.remove(tile);
-            }
-
-        } else {
-            // Player 1-3
-            // Todo - for now, just pick any maxCount tiles. Need better logic
-            for (let i = 0; i < maxCount; i++) {
-                pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
-            }
-        }
-
-        return pass;
-    }
-
     // Remove selected tile and reset selection (hiddenTileSet only)
     // NOTE - only call for PLAYER.BOTTOM (user)
     removeDiscard() {

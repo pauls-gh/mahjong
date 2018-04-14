@@ -168,23 +168,55 @@ export class GameLogic {
         this.state = STATE.COURTESY_QUERY_COMPLETE;
         this.updateUI();
 
-        if (player0CourtesyVote) {
-            this.state = STATE.COURTESY;
-            this.updateUI();
-            
-            // Perform courtesy voting
-            this.table.courtesyVote(player0CourtesyVote);
+        this.state = STATE.COURTESY;
+        this.updateUI();
 
+        // Get courtesy votes for all players
+        const courtesyVoteArray = [];
+
+        courtesyVoteArray[0] = player0CourtesyVote;
+        for (let i = 1; i < 4; i++) {
+            courtesyVoteArray[i] = this.gameAI.courtesyVote(i);
+        }
+
+        for (let i = 0; i < 4; i++) {
+            printMessage("Player " + i + " wants to exchange " + courtesyVoteArray[i]  + " tiles\n");
+        }
+        
+        // Perform courtesy voting
+        this.table.courtesyVote(courtesyVoteArray);
+
+        if (this.table.player02CourtesyVote) {
             // Wait for user to select courtesy pass tiles
             await this.courtesyPass();
+        }
+        
+        this.state = STATE.COURTESY_COMPLETE;
+        this.updateUI();
 
-            this.state = STATE.COURTESY_COMPLETE;
-            this.updateUI();
+        const courtesyPassArray = [];
 
-            // Perform courtesy pass exchange
-            this.table.courtesyPass();
+        // Player 0 (human) pressed "Pass" button
+        courtesyPassArray[0] = this.table.players[0].hand.getSelectionHidden();
 
-        } 
+        // Reset selectCount
+        this.table.players[0].hand.resetSelection();
+
+        // Remove from tile set
+        for (const tile of courtesyPassArray[0] ) {
+            this.table.players[0].hand.removeHidden(tile);
+        }            
+
+        // Players 1 - 3, get courtesy pass.  
+        // Note: tiles are removed from player's hands
+        courtesyPassArray[1] = this.gameAI.courtesyPass(1, this.table.player13CourtesyVote);
+        courtesyPassArray[2] = this.gameAI.courtesyPass(2, this.table.player02CourtesyVote);
+        courtesyPassArray[3] = this.gameAI.courtesyPass(3, this.table.player13CourtesyVote);
+
+        // Perform courtesy pass exchange
+        this.table.courtesyPass(courtesyPassArray);
+
+        printMessage("Courtesy complete\n");
 
         // Start main game loop
         this.loop();

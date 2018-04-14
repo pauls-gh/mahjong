@@ -104,7 +104,7 @@ export class Card {
 
         if (info.tileCount !== 14) {
             return info;
-        }        
+        }
 
         // Compare against all possible hands
         let found = false;
@@ -315,10 +315,11 @@ export class Card {
     }
 
     // Given hand (must be 14 tiles), rank against all card hands
+    // Output:  rankCardHands array of rankInfo, NOT sorted by rank.  Inorder by group/hands.
     rankHandArray14(hand) {
         const validInfo = this.validateHand14(hand);
         const rankCardHands = [];
-        
+
         // Consolidate hand to test array
         const test = hand.getTileArray();
 
@@ -329,7 +330,7 @@ export class Card {
                     group,
                     hand: validHand,
                     rank: 0,
-                    componentInfoArray: null
+                    componentInfoArray: []
                 };
                 rankCardHands.push(rankInfo);
 
@@ -418,7 +419,7 @@ export class Card {
         const rankComponentInfo = {
             rank: 0,
             // Array of component info (including tile array for each component found)
-            componentInfoArray: []      
+            componentInfoArray: []
         }
 
         // If even/odd hand, find the tile number with most even/odd (char/bam/dot only)
@@ -432,7 +433,7 @@ export class Card {
                 case SUIT.CHAR:
                 case SUIT.BAM:
                 case SUIT.DOT:
-                    if (tile.number >= 0 && tile.number <= 9 ) {
+                    if (tile.number >= 0 && tile.number <= 9) {
                         numberCount[tile.number]++;
                     }
                     break;
@@ -472,7 +473,7 @@ export class Card {
             };
 
             rankComponentInfo.componentInfoArray.push(componentInfo);
-            
+
             // Translate virtual suit to real suit using vsuitArray
             if (compSuit >= SUIT.VSUIT1_DRAGON) {
                 compNum = vsuitArray[compSuit - SUIT.VSUIT1_DRAGON];
@@ -521,6 +522,8 @@ export class Card {
                         if (tile.suit === SUIT.JOKER) {
                             // Found tile match
                             found = true;
+                            componentInfo.tileArray.push(tile);
+
                             // Remove tile from testCopy array
                             const index = testCopy.indexOf(tile);
                             testCopy.splice(index, 1);

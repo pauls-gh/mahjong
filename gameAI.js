@@ -14,6 +14,30 @@ export class GameAI {
         this.table = table;
     }
 
+
+    rankTiles13(hand) {
+        // Add a bogus tile to make hand 14 tiles
+        const copyHand = hand.dupHand();
+        const invalidTile = new Tile(SUIT.INVALID, VNUMBER.INVALID);
+        copyHand.insertHidden(invalidTile);
+
+        // Rank tiles
+        const rankCardHands = this.card.rankHandArray14(copyHand);
+        const tileRankArray = this.rankTiles14(copyHand, rankCardHands);
+
+        // Remove invalid tile
+        for (let i = 0; i < tileRankArray.length; i++) {
+            const rankInfo = tileRankArray[i];
+            if (rankInfo.tile === invalidTile) {
+                tileRankArray.splice(i, 1);
+                break;
+            }
+        }
+
+        return tileRankArray;
+    }
+
+
     // Rank (hidden) tiles
     // Input
     //  - hand (must be 14 tiles)
@@ -44,7 +68,7 @@ export class GameAI {
             // - compare delta in testRankArray and rankCardHands
             // - don't discard tiles that would cause large negative deltas
             for (let j = 0; j < rankCardHands.length; j++) {
-                rank += (copyHandRankArray[j].rank - rankCardHands[j].rank);
+                rank += (copyHandRankArray[j].rank - rankCardHands[j].rank) * rankCardHands[j].rank;
             }
 
             const tileRank = {
@@ -234,6 +258,7 @@ export class GameAI {
 
         // Check for pong/kong/quint
         const rankCardHands = this.card.rankHandArray14(hand);
+        this.card.sortHandRankArray(rankCardHands);
         const rankInfo = rankCardHands[0];
 
         // Allow exposure if we have already exposed, or hand rank is greater than a certain level
@@ -265,22 +290,7 @@ export class GameAI {
 
         // Player 1-3 will only have 13 tiles in their hands during the Charleston
         // Add a bogus tile to make 14.
-        const copyHand = this.table.players[player].hand.dupHand();
-        const invalidTile = new Tile(SUIT.INVALID, VNUMBER.INVALID);
-        copyHand.insertHidden(invalidTile);
-
-        // Rank tiles
-        const rankCardHands = this.card.rankHandArray14(copyHand);
-        const tileRankArray = this.rankTiles14(copyHand, rankCardHands);
-
-        // Remove invalid tile
-        for (let i = 0; i < tileRankArray.length; i++) {
-            const rankInfo = tileRankArray[i];
-            if (rankInfo.tile === invalidTile) {
-                tileRankArray.splice(i, 1);
-                break;
-            }
-        }
+        const tileRankArray = this.rankTiles13(this.table.players[player].hand)
 
         this.printTileRankArray(tileRankArray, 3);
 
@@ -293,6 +303,49 @@ export class GameAI {
 
             // Remove tile from player's hand
             this.table.players[player].hand.removeHidden(tile);
+        }
+
+        return pass;
+    }
+
+    courtesyVote(player) {
+        // Player 1-3 will only have 13 tiles in their hands during the courtesy
+        // Add a bogus tile to make 14.
+        const copyHand = this.table.players[player].hand.dupHand();
+        const invalidTile = new Tile(SUIT.INVALID, VNUMBER.INVALID);
+        copyHand.insertHidden(invalidTile);
+
+        const rankCardHands = this.card.rankHandArray14(copyHand);
+        this.card.sortHandRankArray(rankCardHands);
+        const rankInfo = rankCardHands[0];
+        const rank = rankInfo.rank;
+
+        this.debugPrint("courtesyVote: Player " + player + ", rank = " + rank);
+        this.card.printHandRankArray(rankCardHands, 1);
+
+        if (rank < 50) {
+            return 3;
+        }
+        if (rank < 60) {
+            return 2;
+        }
+        if (rank < 70) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    courtesyPass(player, maxCount) {
+        // Player 1-3 will only have 13 tiles in their hands during the courtesy
+        const tileRankArray = this.rankTiles13(this.table.players[player].hand);
+
+        const pass = [];
+        for (let i = 0; i < maxCount; i++) {
+            const rankInfo = tileRankArray[i];
+            const tile = rankInfo.tile;
+            this.table.players[player].hand.removeHidden(tile);
+            pass.push(tile);
         }
 
         return pass;
