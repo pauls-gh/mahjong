@@ -151,14 +151,9 @@ export class Table {
         }
     }
 
-    charlestonPass(player) {
-        const charlestonPassArray = [];
-
-        // Remove 3 cards for player 0, 1, 2, 3
-        for (let i = 0; i < 4; i++) {
-            charlestonPassArray[i] = this.players[i].hand.removeCharlestonPass();
-        }
-
+    // Insert pass tile arrays into players hands.
+    // Note - pass tiles have already been removed from the player's hand
+    charlestonPass(player, charlestonPassArray) {
         const delta = player - PLAYER.BOTTOM;
 
         // Insert 3 cards from player 0-3 to the appropriate player
@@ -168,11 +163,17 @@ export class Table {
             if (to > 3) {
                 to -= 4;
             }
-            this.players[to].hand.insertCharlestonPass(charlestonPassArray[from]);
+
+            for (const tile of charlestonPassArray[from]) {
+                this.players[to].hand.insertHidden(tile);
+            }
         }
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {
+            if (i !== 0) {
+                this.players[i].hand.sortSuitHidden();
+            }
             this.players[i].showHand();
         }
     }

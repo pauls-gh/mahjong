@@ -17,7 +17,7 @@ export class GameLogic {
         this.state = STATE.INIT;
         this.table = table;
         this.card = new Card();
-        this.gameAI = new GameAI(this.card);
+        this.gameAI = new GameAI(this.card, this.table);
         this.currPlayer = 0;
         this.button1Function = null;
         this.button2Function = null;
@@ -125,7 +125,7 @@ export class GameLogic {
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
         
         // debugging - skip charleston
-        if (1) {
+        if (0) {
             this.loop();
         } else {
             this.charleston();
@@ -545,7 +545,27 @@ export class GameLogic {
                 button1.removeEventListener("click", this.button1Function);
     
                 this.button1Function = function () {
-                    this.table.charlestonPass(playerId);
+                    const charlestonPassArray = [];
+
+                    // Player 0 (human) pressed "Pass" button
+                    // Get 3 tiles picked by player 0 (human)
+                    charlestonPassArray[0] = this.table.players[0].hand.getSelectionHidden(); 
+        
+                    // Reset selectCount
+                    this.table.players[0].hand.resetSelection();
+        
+                    // Remove from hand
+                    for (const tile of charlestonPassArray[0]) {
+                        this.table.players[0].hand.removeHidden(tile);
+                    }
+
+                    // Remove 3 cards for player 1, 2, 3
+                    for (let i = 1; i < 4; i++) {
+                        charlestonPassArray[i] = this.gameAI.charlestonPass(i);
+                    }
+            
+                    // Exchange charleston passes among all players
+                    this.table.charlestonPass(playerId, charlestonPassArray);
                     printMessage("Pass " + playerText[playerId] + " complete\n");
     
                     resolve();

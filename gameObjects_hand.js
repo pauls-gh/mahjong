@@ -486,39 +486,6 @@ export class Hand {
         }
     }
 
-    insertCharlestonPass(pass) {
-        for (const tile of pass) {
-            this.insert(tile);
-        }
-    }
-
-    removeCharlestonPass() {
-        let pass = [];
-        if (this.hiddenTileSet.inputEnabled) {
-
-            // Player 0 (human) pressed "Pass" button
-            // Get 3 tiles picked by player 0 (human)
-            pass = this.hiddenTileSet.getSelection();
-
-            // Reset selectCount
-            this.hiddenTileSet.resetSelection();
-
-            // Remove from tile set
-            for (const tile of pass) {
-                this.hiddenTileSet.remove(tile);
-            }
-
-        } else {
-            // Player 1-3
-            // TODO - for now, just pick any 3 tiles. Need better logic
-            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
-            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
-            pass.push(this.hiddenTileSet.remove(this.hiddenTileSet.tileArray[0]));
-        }
-
-        return pass;
-    }
-
     courtesyVote() {
         // Todo - improve algorithm
         return 3;

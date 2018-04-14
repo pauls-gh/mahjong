@@ -9,9 +9,9 @@ const trace = 0;
 // PRIVATE GLOBALS
 
 export class GameAI {
-    constructor(card) {
+    constructor(card, table) {
         this.card = card;
-        this.players = [];
+        this.table = table;
     }
 
     // Rank (hidden) tiles
@@ -77,7 +77,7 @@ export class GameAI {
 
     // Return true if hand is modified by swapping jokers
     exchangeTilesForJokers(hand) {
-        const exposedJokerArray = gGameLogic.table.getExposedJokerArray();
+        const exposedJokerArray = this.table.getExposedJokerArray();
         const rankCardHands = this.card.rankHandArray14(hand);
         let bestRank = -100000;
         let bestTile = null;
@@ -130,7 +130,7 @@ export class GameAI {
             this.debugPrint("exchangeTilesForJokers. bestRank = " + bestRank + "\n");
 
             // Hand improved with joker.  Make the exchange in the real hand.
-            gGameLogic.table.exchangeJoker(hand, bestTile);
+            this.table.exchangeJoker(hand, bestTile);
 
             return true;
         }
@@ -150,7 +150,7 @@ export class GameAI {
     chooseDiscard(currPlayer) {
 
         // Just picked new tile from wall. Hand will contain 14 tiles.
-        const hand = gGameLogic.table.players[currPlayer].hand;
+        const hand = this.table.players[currPlayer].hand;
 
         // Check for mahjong
         let validInfo = this.card.validateHand14(hand);
@@ -189,8 +189,8 @@ export class GameAI {
         const discardTile = tileRankArray[0].tile;
 
         // Remove tile from player's hidden tiles
-        gGameLogic.table.players[currPlayer].hand.removeHidden(discardTile);
-        gGameLogic.table.players[currPlayer].hand.sortSuitHidden();
+        this.table.players[currPlayer].hand.removeHidden(discardTile);
+        this.table.players[currPlayer].hand.sortSuitHidden();
 
         if (1) {
             this.debugPrint("****************")
@@ -216,7 +216,7 @@ export class GameAI {
     //    {playerOption, tileArray}
     claimDiscard(player, discardTile) {
         // Duplicate hand
-        const hand = gGameLogic.table.players[player].hand.dupHand();
+        const hand = this.table.players[player].hand.dupHand();
 
         // Form 14 tile hand with discardTile
         hand.insertHidden(discardTile);
@@ -259,6 +259,44 @@ export class GameAI {
         };
     }
 
+    // Return 3 tiles to remove in Charleston
+    charlestonPass(player) {
+        const pass = [];
+
+        // Player 1-3 will only have 13 tiles in their hands during the Charleston
+        // Add a bogus tile to make 14.
+        const copyHand = this.table.players[player].hand.dupHand();
+        const invalidTile = new Tile(SUIT.INVALID, VNUMBER.INVALID);
+        copyHand.insertHidden(invalidTile);
+
+        // Rank tiles
+        const rankCardHands = this.card.rankHandArray14(copyHand);
+        const tileRankArray = this.rankTiles14(copyHand, rankCardHands);
+
+        // Remove invalid tile
+        for (let i = 0; i < tileRankArray.length; i++) {
+            const rankInfo = tileRankArray[i];
+            if (rankInfo.tile === invalidTile) {
+                tileRankArray.splice(i, 1);
+                break;
+            }
+        }
+
+        this.printTileRankArray(tileRankArray, 3);
+
+        // Pass tiles
+        for (let i = 0; i < 3; i++) {
+            const rankInfo = tileRankArray[i];
+            const tile = rankInfo.tile;
+
+            pass.push(tile);
+
+            // Remove tile from player's hand
+            this.table.players[player].hand.removeHidden(tile);
+        }
+
+        return pass;
+    }
 
     debugPrint(str) {
         if (debug) {

@@ -94,6 +94,9 @@ export class Tile {
     }
 
     getText() {
+        if (this.suit === SUIT.INVALID) {
+            return "Invalid";
+        }
         const group = gTileGroups[this.suit];
         let text = null;
 
