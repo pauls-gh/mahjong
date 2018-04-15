@@ -120,9 +120,10 @@ export class GameLogic {
             //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
             //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
             //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));            
+            hand.insertHidden(new Tile(SUIT.DOT, 3));
 
-            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
-            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
         } 
 
         if (1) {
@@ -152,6 +153,32 @@ export class GameLogic {
             hand.insertHidden(new Tile(SUIT.DOT, 6));
 
             
+        }
+
+        if (1) {
+            // Player 2  (13 tiles)
+            const hand = new Hand(false);
+            initPlayerHandArray[2] = hand;
+
+            // FF 1111 DDDD 1111 (3 suits, like numbers)
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.DOT, 3));
+            hand.insertHidden(new Tile(SUIT.DOT, 3));
+            //hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            
+
+            hand.insertHidden(new Tile(SUIT.CHAR, 3));
+            hand.insertHidden(new Tile(SUIT.CHAR, 3));
+            hand.insertHidden(new Tile(SUIT.CHAR, 3));
+            //hand.insertHidden(new Tile(SUIT.BAM, 4));
+
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
+
         }
 
         this.table.deal(initPlayerHandArray);

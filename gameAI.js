@@ -87,7 +87,7 @@ export class GameAI {
         // Sort  (higher => lower). We want to discard tiles that have the least negative impact.
         tileRankArray.sort((a, b) => b.rank - a.rank);
 
-        //PS TEST 
+        // PS TEST
         if (debug) {
             this.debugPrint("****************");
             this.card.sortHandRankArray(rankCardHands);
@@ -113,7 +113,7 @@ export class GameAI {
     }
 
     // Return true if hand is modified by swapping jokers
-    exchangeTilesForJokers(hand) {
+    exchangeTilesForJokers(currPlayer, hand) {
         const exposedJokerArray = this.table.getExposedJokerArray();
         const rankCardHands = this.card.rankHandArray14(hand);
         let bestRank = -100000;
@@ -135,7 +135,7 @@ export class GameAI {
             }
 
             if (!jokerFound) {
-                break;
+                continue;
             }
 
             // Rank hand with a joker replacing the tile
@@ -167,7 +167,7 @@ export class GameAI {
             this.debugPrint("exchangeTilesForJokers. bestRank = " + bestRank + "\n");
 
             // Hand improved with joker.  Make the exchange in the real hand.
-            this.table.exchangeJoker(hand, bestTile);
+            this.table.exchangeJoker(currPlayer, hand, bestTile);
 
             return true;
         }
@@ -204,7 +204,7 @@ export class GameAI {
 
         let modified = false;
         do {
-            modified = this.exchangeTilesForJokers(hand);
+            modified = this.exchangeTilesForJokers(currPlayer, hand);
 
             if (modified) {
                 // Check for mahjong again
@@ -268,17 +268,41 @@ export class GameAI {
 
         // Allow exposure if we have already exposed, or hand rank is greater than a certain level
         if (!hand.isAllHidden() || (!rankInfo.hand.concealed && rankInfo.rank > 55)) {
+
+
             // Check components for the discarded tile
             for (const compInfo of rankInfo.componentInfoArray) {
                 for (const tile of compInfo.tileArray) {
-                    if ((tile === discardTile) && (compInfo.component.count >= 3) &&
-                     (compInfo.tileArray.length === compInfo.component.count)) {
-                        // If it's part of a completed component => let's claim it for exposure
-                        return {
-                            playerOption: PLAYER_OPTION.EXPOSE_TILES,
-                            tileArray: compInfo.tileArray
+                    if (tile === discardTile) {
+                        // Note - compInfo.tileArray will not include jokers
+
+                        // Check for non-joker pong/kong/quint completion
+                        if ((compInfo.component.count >= 3) && (compInfo.tileArray.length === compInfo.component.count)) {
+                            // If it's part of a completed component => let's claim it for exposure
+                            return {
+                                playerOption: PLAYER_OPTION.EXPOSE_TILES,
+                                tileArray: compInfo.tileArray
+                            }
                         }
+                        // Need jokers to complete pong/kong/quint
+                        const jokerArray = hand.getHiddenJokers();
+                        const jokerDelta = compInfo.component.count - compInfo.tileArray.length;
+
+                        if (jokerArray.length >= (compInfo.component.count - compInfo.tileArray.length)) {
+                            // Add jokers to component tile array
+                            for (let i = 0; i < jokerDelta; i++) {
+                                compInfo.tileArray.push(jokerArray[i]);
+                            }
+
+                            return {
+                                playerOption: PLAYER_OPTION.EXPOSE_TILES,
+                                tileArray: compInfo.tileArray
+                            }                            
+                        }
+
                     }
+
+
                 }
             }
         }

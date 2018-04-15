@@ -28,7 +28,7 @@ const gPlayerInfo = [
     {
         id: PLAYER.RIGHT,
         x: 1000,
-        y: 50,
+        y: 520,
         angle: 270,
         rectX: 1000 - (SPRITE_HEIGHT * SPRITE_SCALE_Y / 2),
         rectY: 0,
@@ -38,7 +38,7 @@ const gPlayerInfo = [
     // Player 2  (computer, top)
     {
         id: PLAYER.TOP,
-        x: 300,
+        x: 750,
         y: 50,
         angle: 180,
         rectX: 0,
@@ -384,7 +384,7 @@ export class Table {
     // Output
     // - replace tile with joker in hand
     // - exposed pong/kong/quint replace joker with tile
-    exchangeJoker(hand, swapTile) {
+    exchangeJoker(currPlayer, hand, swapTile) {
         outerLoop:
         for (let i = 0; i < 4; i++) {
             for (const tileset of this.players[i].hand.exposedTileSetArray) {
@@ -404,6 +404,9 @@ export class Table {
 
                     for (const tile of tileset.tileArray) {
                         if (tile.suit === SUIT.JOKER) {
+                            const text = swapTile.getText();
+                            printMessage("Player " + currPlayer + " exchanged " + text + " for joker\n");
+                    
                             // Exchange swapTile
                             hand.removeHidden(swapTile);
                             tileset.insert(swapTile);
@@ -412,6 +415,10 @@ export class Table {
                             tileset.remove(tile);
                             hand.insertHidden(tile);
 
+                            // Show all players hands
+                            for (let k = 0; k < 4; k++) {
+                                this.players[k].showHand();
+                            }                            
                             break outerLoop;
                         }
                     }

@@ -130,12 +130,14 @@ class TileSet {
                 x += SPRITE_WIDTH;
                 break;
             case PLAYER.TOP:
-                x += SPRITE_WIDTH * SPRITE_SCALE_X;
+                x -= SPRITE_WIDTH * SPRITE_SCALE_X;
                 break;
             case PLAYER.LEFT:
+                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                break;
             case PLAYER.RIGHT:
             default:
-                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                y -= SPRITE_WIDTH * SPRITE_SCALE_X;
                 break;
             }
         }
@@ -235,6 +237,18 @@ export class Hand {
         return false;
     }
 
+    // Return array of joker tiles (if any).  Does NOT remove from hidden tileset.
+    getHiddenJokers() {
+        const jokerArray = [];
+        for (const tile of this.hiddenTileSet.tileArray) {
+            if (tile.suit === SUIT.JOKER) {
+                jokerArray.push(tile);
+            }
+        }
+
+        return jokerArray;
+    }
+
     reset(wall) {
         // Reset hand - return all tiles to wall
         this.hiddenTileSet.reset(wall);
@@ -252,19 +266,23 @@ export class Hand {
         // Display all tilesets
         ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y));
 
+        const separatorScale = 0.1;
+
         for (const tileset of this.exposedTileSetArray) {
             // Separate hidden and exposed tiles
             switch (playerInfo.id) {
             case PLAYER.BOTTOM:
-                x += SPRITE_WIDTH;
+                x += SPRITE_WIDTH * separatorScale;
                 break;
             case PLAYER.TOP:
-                x += SPRITE_WIDTH * SPRITE_SCALE_X;
+                x -= SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
                 break;
             case PLAYER.LEFT:
+                y += SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+                break;
             case PLAYER.RIGHT:
             default:
-                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                y -= SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
                 break;
             }
 
