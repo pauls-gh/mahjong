@@ -258,7 +258,7 @@ export class GameAI {
                     count++;
                 }
             }
-            if (count === compInfo.component.count) {
+            if (count >= compInfo.component.count) {
                 return false;
             }
 
@@ -333,17 +333,7 @@ export class GameAI {
                 }
             }
 
-            //PS TEST
-            if (compInfo && compInfo.tileArray.length === 4 && compInfo.tileArray[3] === undefined) {
-                this.debugPrint("ERROR");
-            }
-
             if (compInfo && this.validateComponentForExposure(player, compInfo, discardTile)) {
-            //PS TEST
-            if (compInfo && compInfo.tileArray.length === 4 && compInfo.tileArray[3] === undefined) {
-                this.debugPrint("ERROR");
-            }
-                
                 // If it's part of a completed component => let's claim it for exposure
                 return {
                     playerOption: PLAYER_OPTION.EXPOSE_TILES,
