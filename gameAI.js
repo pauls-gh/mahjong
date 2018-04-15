@@ -234,6 +234,58 @@ export class GameAI {
         };
     }
 
+    // Test if this component is suitable for exposure
+    //
+    // Input: - compInfo.tileArray with discardTile as one of the tiles
+    //        - compInfo.tileArray will not include jokers
+    // Output: true - exposure ok (pong/kong/quint)
+    validateComponentForExposure(player, compInfo, discardTile) {
+        // Original hand (without discardTile added)
+        const hand = this.table.players[player].hand;
+
+        // Reject single/pairs components
+        if (compInfo.component.count < 3) {
+            return false;
+        }
+
+        // Correct length and jokerless?  (compInfo.tileArray will not include jokers)
+        if (compInfo.tileArray.length === compInfo.component.count) {
+            // Test to make sure we don't already have a pong/kong/quint of this size in our hand (hidden tiles only)
+            let count = 0;
+            const tileArray = hand.getHiddenTileArray();
+            for (const tile of tileArray) {
+                if (discardTile.suit === tile.suit && discardTile.number === tile.number) {
+                    count++;
+                }
+            }
+            if (count === compInfo.component.count) {
+                return false;
+            }
+
+            return true;
+        }
+
+        // At this point, we'll need jokers to complete the pong/kong/quint
+        const jokerArray = hand.getHiddenJokers();
+
+        if (!jokerArray.length) {
+            return false;
+        }
+
+        const requiredJokers = compInfo.component.count - compInfo.tileArray.length;
+
+        if (requiredJokers > jokerArray.length) {
+            return false;
+        }
+
+        // Add jokers to component tile array
+        for (let i = 0; i < requiredJokers; i++) {
+            compInfo.tileArray.push(jokerArray[i]);
+        }
+
+        return true;
+    }
+
     // Player AI
     // Someone discarded a tile, decide whether to claim it.  Hand has 13 tiles.
     // - Dup hand.  Form 14 card hand with discardTile
@@ -245,13 +297,13 @@ export class GameAI {
     //    {playerOption, tileArray}
     claimDiscard(player, discardTile) {
         // Duplicate hand
-        const hand = this.table.players[player].hand.dupHand();
+        const copyHand = this.table.players[player].hand.dupHand();
 
         // Form 14 tile hand with discardTile
-        hand.insertHidden(discardTile);
+        copyHand.insertHidden(discardTile);
 
         // Check for mahjong
-        const validInfo = this.card.validateHand14(hand);
+        const validInfo = this.card.validateHand14(copyHand);
 
         if (validInfo.valid) {
             // Mahjong!
@@ -262,49 +314,43 @@ export class GameAI {
         }
 
         // Check for pong/kong/quint
-        const rankCardHands = this.card.rankHandArray14(hand);
+        const rankCardHands = this.card.rankHandArray14(copyHand);
         this.card.sortHandRankArray(rankCardHands);
         const rankInfo = rankCardHands[0];
 
         // Allow exposure if we have already exposed, or hand rank is greater than a certain level
-        if (!hand.isAllHidden() || (!rankInfo.hand.concealed && rankInfo.rank > 55)) {
+        if (!copyHand.isAllHidden() || (!rankInfo.hand.concealed && rankInfo.rank > 55)) {
 
-
-            // Check components for the discarded tile
-            for (const compInfo of rankInfo.componentInfoArray) {
-                for (const tile of compInfo.tileArray) {
+            // Find component with the discarded tile
+            let compInfo = null;
+            outerloop:
+            for (const tempcompInfo of rankInfo.componentInfoArray) {
+                for (const tile of tempcompInfo.tileArray) {
                     if (tile === discardTile) {
-                        // Note - compInfo.tileArray will not include jokers
-
-                        // Check for non-joker pong/kong/quint completion
-                        if ((compInfo.component.count >= 3) && (compInfo.tileArray.length === compInfo.component.count)) {
-                            // If it's part of a completed component => let's claim it for exposure
-                            return {
-                                playerOption: PLAYER_OPTION.EXPOSE_TILES,
-                                tileArray: compInfo.tileArray
-                            }
-                        }
-                        // Need jokers to complete pong/kong/quint
-                        const jokerArray = hand.getHiddenJokers();
-                        const jokerDelta = compInfo.component.count - compInfo.tileArray.length;
-
-                        if (jokerArray.length >= (compInfo.component.count - compInfo.tileArray.length)) {
-                            // Add jokers to component tile array
-                            for (let i = 0; i < jokerDelta; i++) {
-                                compInfo.tileArray.push(jokerArray[i]);
-                            }
-
-                            return {
-                                playerOption: PLAYER_OPTION.EXPOSE_TILES,
-                                tileArray: compInfo.tileArray
-                            }                            
-                        }
-
+                        compInfo = tempcompInfo;
+                        break outerloop;
                     }
-
-
                 }
             }
+
+            //PS TEST
+            if (compInfo && compInfo.tileArray.length === 4 && compInfo.tileArray[3] === undefined) {
+                this.debugPrint("ERROR");
+            }
+
+            if (compInfo && this.validateComponentForExposure(player, compInfo, discardTile)) {
+            //PS TEST
+            if (compInfo && compInfo.tileArray.length === 4 && compInfo.tileArray[3] === undefined) {
+                this.debugPrint("ERROR");
+            }
+                
+                // If it's part of a completed component => let's claim it for exposure
+                return {
+                    playerOption: PLAYER_OPTION.EXPOSE_TILES,
+                    tileArray: compInfo.tileArray
+                }
+            }
+
         }
 
         // Do not claim discard
