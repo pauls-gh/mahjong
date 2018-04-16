@@ -511,7 +511,7 @@ export class Card {
 
                             // DO NOT insert joker into component tile array, as this will fix the joker to this particular combination.
                             // Make joker decision later when tile is discarded.
-                            //componentInfo.tileArray.push(tile);
+                            // componentInfo.tileArray.push(tile);
 
                             // Remove tile from testCopy array
                             const index = testCopy.indexOf(tile);

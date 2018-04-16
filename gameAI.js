@@ -242,18 +242,29 @@ export class GameAI {
     validateComponentForExposure(player, compInfo, discardTile) {
         // Original hand (without discardTile added)
         const hand = this.table.players[player].hand;
+        const hiddenTileArray = hand.getHiddenTileArray();
 
         // Reject single/pairs components
         if (compInfo.component.count < 3) {
             return false;
         }
 
+        // Make sure all tiles of the component are hidden (not already exposed)
+        for (const compTile of compInfo.tileArray) {
+            if (compTile === discardTile) {
+                continue;
+            }
+            if (hiddenTileArray.indexOf(compTile) === -1) {
+                return false;
+            }
+        }
+
+
         // Correct length and jokerless?  (compInfo.tileArray will not include jokers)
         if (compInfo.tileArray.length === compInfo.component.count) {
             // Test to make sure we don't already have a pong/kong/quint of this size in our hand (hidden tiles only)
             let count = 0;
-            const tileArray = hand.getHiddenTileArray();
-            for (const tile of tileArray) {
+            for (const tile of hiddenTileArray) {
                 if (discardTile.suit === tile.suit && discardTile.number === tile.number) {
                     count++;
                 }

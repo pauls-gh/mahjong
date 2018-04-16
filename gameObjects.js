@@ -82,8 +82,8 @@ export class Tile {
         this.number = number;
         this.sprite = null;
         this.spriteName = spriteName;
-        this.x = 0;
-        this.y = 0;
+        this.origX = 0;
+        this.origY = 0;
         this.selected = false;
     }
 

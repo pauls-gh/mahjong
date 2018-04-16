@@ -122,7 +122,7 @@ export class Table {
         // Shuffle tiles
         this.wall.shuffle();
 
-        // Deal player hands. 
+        // Deal player hands.
         // Use initPlayerHandArray to pre-populate  (useful for testing/training mode)
         // Note: pre-populate hand may be less than a full hand
         for (let player = 0; player < 4; player++) {
@@ -139,7 +139,7 @@ export class Table {
                 this.players[player].hand.insertHidden(tile);
             }
         }
-        
+
         // Deal remainder of tiles from wall
         for (let player = 0; player < 4; player++) {
             let handLength = 13;
@@ -147,7 +147,7 @@ export class Table {
                 handLength = 14;
             }
 
-            // Init hand may be < 13 (or 14). 
+            // Init hand may be < 13 (or 14).
             const numRemainingTiles = handLength - this.players[player].hand.getLength();
             for (let j = 0; j < numRemainingTiles; j++) {
                 const tile = this.wall.remove();
@@ -210,14 +210,14 @@ export class Table {
 
             for (const tile of courtesyPassArray[from]) {
                 this.players[to].hand.insertHidden(tile);
-            }            
+            }
         }
 
         // Show all players hands
         for (let i = 0; i < 4; i++) {
             if (i !== 0) {
                 this.players[i].hand.sortSuitHidden();
-            }            
+            }
             this.players[i].showHand();
         }
     }
@@ -294,7 +294,7 @@ export class Table {
             for (const tile of claimArray[winningPlayer].tileArray) {
                 if (tile !== discardTile) {
                     this.players[winningPlayer].hand.removeHidden(tile);
-                }   
+                }
             }
 
             this.players[winningPlayer].hand.insertExposed(claimArray[winningPlayer].tileArray);
@@ -406,7 +406,7 @@ export class Table {
                         if (tile.suit === SUIT.JOKER) {
                             const text = swapTile.getText();
                             printMessage("Player " + currPlayer + " exchanged " + text + " for joker\n");
-                    
+
                             // Exchange swapTile
                             hand.removeHidden(swapTile);
                             tileset.insert(swapTile);
@@ -418,7 +418,7 @@ export class Table {
                             // Show all players hands
                             for (let k = 0; k < 4; k++) {
                                 this.players[k].showHand();
-                            }                            
+                            }
                             break outerLoop;
                         }
                     }

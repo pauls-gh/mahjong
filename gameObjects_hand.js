@@ -1,7 +1,7 @@
 import {gGameLogic} from "./game.js";
 import {
     STATE, PLAYER, SUIT, SPRITE_WIDTH,
-    SPRITE_SCALE_X, SPRITE_SCALE_Y
+    SPRITE_SCALE_X, SPRITE_SCALE_Y, WINDOW_WIDTH, WINDOW_HEIGHT
 } from "./constants.js";
 
 // PRIVATE CONSTANTS
@@ -48,7 +48,8 @@ class TileSet {
         for (const tile of this.tileArray) {
             if (tile.selected) {
                 tile.selected = false;
-                tile.sprite.y += 25;
+                tile.sprite.x = tile.origX;
+                tile.sprite.y = tile.origY;
                 this.selectCount--;
             }
         }
@@ -108,11 +109,36 @@ class TileSet {
         });
     }
 
+    getTileWidth(playerInfo) {
+        let width = 0;
+
+        switch (playerInfo.id) {
+        case PLAYER.BOTTOM:
+            width = SPRITE_WIDTH;
+            break;
+        case PLAYER.TOP:
+        case PLAYER.LEFT:
+        case PLAYER.RIGHT:
+        default:
+            width = SPRITE_WIDTH * SPRITE_SCALE_X;
+            break;
+        }
+
+        return width;
+    }
+
+    getWidth(playerInfo) {
+        // Width of tileset
+        return this.tileArray.length * this.getTileWidth(playerInfo);
+
+    }
+
     // Returns updated x, y
     showTileSet(playerInfo, posX, posY) {
 
         let x = posX;
         let y = posY;
+        const tileWidth = this.getTileWidth(playerInfo);
 
         for (const tile of this.tileArray) {
             tile.sprite.x = x;
@@ -127,17 +153,17 @@ class TileSet {
 
             switch (playerInfo.id) {
             case PLAYER.BOTTOM:
-                x += SPRITE_WIDTH;
+                x += tileWidth;
                 break;
             case PLAYER.TOP:
-                x -= SPRITE_WIDTH * SPRITE_SCALE_X;
+                x -= tileWidth;
                 break;
             case PLAYER.LEFT:
-                y += SPRITE_WIDTH * SPRITE_SCALE_X;
+                y += tileWidth;
                 break;
             case PLAYER.RIGHT:
             default:
-                y -= SPRITE_WIDTH * SPRITE_SCALE_X;
+                y -= tileWidth;
                 break;
             }
         }
@@ -190,7 +216,7 @@ export class Hand {
                 newTileSet.insert(tile);
             }
             newHand.exposedTileSetArray.push(newTileSet);
-        }        
+        }
 
         return newHand;
     }
@@ -258,31 +284,83 @@ export class Hand {
         }
     }
 
+    getSeperatorDistance(playerInfo) {
+        let seperatorDistance = 0;
+        const separatorScale = 0.1;
+
+        // Separate hidden and exposed tiles
+        switch (playerInfo.id) {
+        case PLAYER.BOTTOM:
+            seperatorDistance = SPRITE_WIDTH * separatorScale;
+            break;
+        case PLAYER.TOP:
+        case PLAYER.LEFT:
+        case PLAYER.RIGHT:
+        default:
+            seperatorDistance = SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+            break;
+        }
+
+        return seperatorDistance;
+    }
+
+    getHandWidth(playerInfo) {
+        let width = 0;
+        const sepDist = this.getSeperatorDistance(playerInfo);
+
+        width += this.hiddenTileSet.getWidth(playerInfo);
+        for (const tileset of this.exposedTileSetArray) {
+            width += sepDist;
+            width += tileset.getWidth(playerInfo);
+        }
+
+        return width;
+    }
+
     showHand(playerInfo) {
-        // Calculate positions for all tiles in hand
+        // Calculate starting position for all tiles in hand
         let x = playerInfo.x;
         let y = playerInfo.y;
+
+        const handWidth = this.getHandWidth(playerInfo);
+        const tileWidth = this.hiddenTileSet.getTileWidth(playerInfo);
+
+        switch (playerInfo.id) {
+        case PLAYER.BOTTOM:
+            x = (WINDOW_WIDTH / 2) - (handWidth / 2) + (tileWidth / 2);
+            break;
+        case PLAYER.TOP:
+            x = (WINDOW_WIDTH / 2) + (handWidth / 2) - (tileWidth / 2);
+            break;
+        case PLAYER.LEFT:
+            y = (WINDOW_HEIGHT / 2) - (handWidth / 2) + (tileWidth / 2);
+            break;
+        case PLAYER.RIGHT:
+        default:
+            y = (WINDOW_HEIGHT / 2) + (handWidth / 2) - (tileWidth / 2);
+            break;
+        }
 
         // Display all tilesets
         ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y));
 
-        const separatorScale = 0.1;
-
         for (const tileset of this.exposedTileSetArray) {
+            const sepDist = this.getSeperatorDistance(playerInfo);
+
             // Separate hidden and exposed tiles
             switch (playerInfo.id) {
             case PLAYER.BOTTOM:
-                x += SPRITE_WIDTH * separatorScale;
+                x += sepDist;
                 break;
             case PLAYER.TOP:
-                x -= SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+                x -= sepDist;
                 break;
             case PLAYER.LEFT:
-                y += SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+                y += sepDist;
                 break;
             case PLAYER.RIGHT:
             default:
-                y -= SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+                y -= sepDist;
                 break;
             }
 
@@ -358,7 +436,8 @@ export class Hand {
 
                     if (maxSelect) {
                         if (tile.selected) {
-                            sprite.y += 25;
+                            sprite.x = tile.origX;
+                            sprite.y = tile.origY;
                             tileSet.selectCount--;
                             tile.selected = !tile.selected;
                         } else if (tileSet.selectCount < maxSelect) {
@@ -382,6 +461,8 @@ export class Hand {
                             }
 
                             if (bSelectOk) {
+                                tile.origX = tile.sprite.x;
+                                tile.origY = tile.sprite.y;
                                 sprite.y -= 25;
                                 tileSet.selectCount++;
                                 tile.selected = !tile.selected;
@@ -455,7 +536,8 @@ export class Hand {
 
                         if (maxSelect) {
                             if (tile.selected) {
-                                sprite.y += 25;
+                                sprite.x = tile.origX;
+                                sprite.y = tile.origY;
                                 tileSet.selectCount--;
                                 tile.selected = !tile.selected;
                             } else if (tileSet.selectCount < maxSelect) {
@@ -487,7 +569,28 @@ export class Hand {
                                 }
 
                                 if (bSelectOk) {
-                                    sprite.y -= 25;
+                                    tile.origX = sprite.x;
+                                    tile.origY = sprite.y;
+
+                                    switch (sprite.angle) {
+                                    case 270:
+                                        // Player 1  (right)
+                                        sprite.x -= 25;
+                                        break;
+                                    case 180:
+                                        // Player 2 (top)
+                                        sprite.y += 25;
+                                        break;
+                                    case 90:
+                                        // Player 3  (left)
+                                        sprite.x += 25;
+                                        break;
+                                    case 0:
+                                    default:
+                                        // Player 0 (bottom)
+                                        sprite.y -= 25;
+                                        break;
+                                    }
                                     tileSet.selectCount++;
                                     tile.selected = !tile.selected;
                                 }
