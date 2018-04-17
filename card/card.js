@@ -2,24 +2,26 @@ import {debugPrint, debugTrace, gdebug} from "../game.js";
 import {Tile} from "../gameObjects.js";
 import {Hand} from "../gameObjects_hand.js";
 import {SUIT, DRAGON, WIND, VNUMBER} from "../constants.js";
-import {CardTest} from "./card_test.js";
+import {CardTest2017} from "./2017/card_test.js";
+import {CardTest2018} from "./2018/card_test.js";
 import {validHandGroups2017} from "./2017/card2017.js"
+import {validHandGroups2018} from "./2018/card2018.js"
 
 // PRIVATE CONSTANTS
 
 // PRIVATE GLOBALS
 
 
-// Currently support 2017 card
+// Currently support 2017 and 2018 card
 
 export class Card {
     constructor() {
-        this.year = "2017";
-        this.validHandGroups = validHandGroups2017;
+        this.year = "2018";
+        this.validHandGroups = validHandGroups2018;
 
         // Debug only
-        if (0) {
-            const cardTest = new CardTest(this);
+        if (1) {
+            const cardTest = new CardTest2018(this);
             cardTest.test();
         }
     }

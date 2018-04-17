@@ -296,31 +296,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "11111 1111 11111 (3 suits, any like numbers)",
-            vsuitCount: 3,
-            concealed: false,
-            odd: false,
-            even: false,
-            components: [
-                {
-                    suit: SUIT.VSUIT1,
-                    number: VNUMBER.CONSECUTIVE1,
-                    count: 5
-                },
-                {
-                    suit: SUIT.VSUIT2,
-                    number: VNUMBER.CONSECUTIVE1,
-                    count: 4
-                },
-                {
-                    suit: SUIT.VSUIT3,
-                    number: VNUMBER.CONSECUTIVE1,
-                    count: 5
-                }
-            ]
-        },
-        {
-            description: "FF 11111 22 33333 (1 suit, 3 consecutive numbers)",
+            description: "FF 33333 66 99999 (1 suit)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -331,6 +307,133 @@ export const handsQuints = {
                     number: 0,
                     count: 2
                 },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: 3,
+                    count: 5
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: 6,
+                    count: 2
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: 9,
+                    count: 5
+                }
+
+            ]
+        },
+        {
+            description: "1123 11111 11111 (3 suits, any 3 consec nums, pair any number in run, pair & quints match)",
+            vsuitCount: 3,
+            concealed: false,
+            odd: false,
+            even: false,
+            components: [
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE1,
+                    count: 2
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE2,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE3,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT2,
+                    number: VNUMBER.CONSECUTIVE1,
+                    count: 5
+                },
+                {
+                    suit: SUIT.VSUIT3,
+                    number: VNUMBER.CONSECUTIVE1,
+                    count: 5
+                }
+            ]
+        },
+        {
+            description: "1223 22222 22222 (3 suits, any 3 consec nums, pair any number in run, pair & quints match)",
+            vsuitCount: 3,
+            concealed: false,
+            odd: false,
+            even: false,
+            components: [
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE1,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE2,
+                    count: 2
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE3,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT2,
+                    number: VNUMBER.CONSECUTIVE2,
+                    count: 5
+                },
+                {
+                    suit: SUIT.VSUIT3,
+                    number: VNUMBER.CONSECUTIVE2,
+                    count: 5
+                }
+            ]
+        },
+        {
+            description: "1233 11111 11111 (3 suits, any 3 consec nums, pair any number in run, pair & quints match)",
+            vsuitCount: 3,
+            concealed: false,
+            odd: false,
+            even: false,
+            components: [
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE1,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE2,
+                    count: 1
+                },
+                {
+                    suit: SUIT.VSUIT1,
+                    number: VNUMBER.CONSECUTIVE3,
+                    count: 2
+                },
+                {
+                    suit: SUIT.VSUIT2,
+                    number: VNUMBER.CONSECUTIVE3,
+                    count: 5
+                },
+                {
+                    suit: SUIT.VSUIT3,
+                    number: VNUMBER.CONSECUTIVE3,
+                    count: 5
+                }
+            ]
+        },
+        {
+            description: "11111 22 33 44444 (1 suit, 4 consecutive numbers)",
+            vsuitCount: 1,
+            concealed: false,
+            odd: false,
+            even: false,
+            components: [
                 {
                     suit: SUIT.VSUIT1,
                     number: VNUMBER.CONSECUTIVE1,
@@ -344,66 +447,12 @@ export const handsQuints = {
                 {
                     suit: SUIT.VSUIT1,
                     number: VNUMBER.CONSECUTIVE3,
-                    count: 5
-                }
-
-            ]
-        },
-        {
-            description: "111 3333 55555 DD (1 suit)",
-            vsuitCount: 1,
-            concealed: false,
-            odd: false,
-            even: false,
-            components: [
-                {
-                    suit: SUIT.VSUIT1,
-                    number: 1,
-                    count: 3
-                },
-                {
-                    suit: SUIT.VSUIT1,
-                    number: 3,
-                    count: 4
-                },
-                {
-                    suit: SUIT.VSUIT1,
-                    number: 5,
-                    count: 5
-                },
-                {
-                    suit: SUIT.VSUIT1_DRAGON,
-                    number: 0,
                     count: 2
-                }
-            ]
-        },
-        {
-            description: "555 7777 99999 DD (1 suit)",
-            vsuitCount: 1,
-            concealed: false,
-            odd: false,
-            even: false,
-            components: [
-                {
-                    suit: SUIT.VSUIT1,
-                    number: 5,
-                    count: 3
                 },
                 {
                     suit: SUIT.VSUIT1,
-                    number: 7,
-                    count: 4
-                },
-                {
-                    suit: SUIT.VSUIT1,
-                    number: 9,
+                    number: VNUMBER.CONSECUTIVE4,
                     count: 5
-                },
-                {
-                    suit: SUIT.VSUIT1_DRAGON,
-                    number: 0,
-                    count: 2
                 }
             ]
         }

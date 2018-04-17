@@ -182,7 +182,12 @@ export const handsWindsDragons = {
                 {
                     suit: SUIT.FLOWER,
                     number: 0,
-                    count: 6
+                    count: 3
+                },
+                {
+                    suit: SUIT.FLOWER,
+                    number: 0,
+                    count: 3
                 },
                 {
                     suit: SUIT.WIND,
@@ -206,7 +211,12 @@ export const handsWindsDragons = {
                 {
                     suit: SUIT.FLOWER,
                     number: 0,
-                    count: 6
+                    count: 3
+                },
+                {
+                    suit: SUIT.FLOWER,
+                    number: 0,
+                    count: 3
                 },
                 {
                     suit: SUIT.WIND,

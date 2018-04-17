@@ -825,6 +825,8 @@ export class GameLogic {
         switch (this.state) {
             case STATE.INIT:
             printMessage("American Mahjong v0.1\n");
+            printMessage("Using " + this.card.year + " Mahjong card\n");
+            
             printMessage("Press Start Game button\n");
             sort1.style.display = "none";
             sort2.style.display = "none";
