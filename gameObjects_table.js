@@ -2,7 +2,7 @@ import {game, printMessage} from "./game.js";
 import {
     PLAYER, PLAYER_OPTION, SUIT,
     WINDOW_WIDTH, WINDOW_HEIGHT,
-    SPRITE_HEIGHT, SPRITE_SCALE_Y
+    SPRITE_HEIGHT, SPRITE_SCALE
 } from "./constants.js";
 import {Wall, Discards} from "./gameObjects.js"
 import {Player} from "./gameObjects_player.js"
@@ -30,9 +30,9 @@ const gPlayerInfo = [
         x: 1000,
         y: 520,
         angle: 270,
-        rectX: 1000 - (SPRITE_HEIGHT * SPRITE_SCALE_Y / 2),
+        rectX: 1000 - (SPRITE_HEIGHT * SPRITE_SCALE / 2),
         rectY: 0,
-        rectWidth: SPRITE_HEIGHT * SPRITE_SCALE_Y,
+        rectWidth: SPRITE_HEIGHT * SPRITE_SCALE,
         rectHeight: WINDOW_HEIGHT
     },
     // Player 2  (computer, top)
@@ -42,9 +42,9 @@ const gPlayerInfo = [
         y: 50,
         angle: 180,
         rectX: 0,
-        rectY: 50 - (SPRITE_HEIGHT * SPRITE_SCALE_Y / 2),
+        rectY: 50 - (SPRITE_HEIGHT * SPRITE_SCALE / 2),
         rectWidth: WINDOW_WIDTH,
-        rectHeight: SPRITE_HEIGHT * SPRITE_SCALE_Y
+        rectHeight: SPRITE_HEIGHT * SPRITE_SCALE
     },
     // Player 3  (computer, left)
     {
@@ -52,9 +52,9 @@ const gPlayerInfo = [
         x: 50,
         y: 50,
         angle: 90,
-        rectX: 50 - (SPRITE_HEIGHT * SPRITE_SCALE_Y / 2),
+        rectX: 50 - (SPRITE_HEIGHT * SPRITE_SCALE / 2),
         rectY: 0,
-        rectWidth: SPRITE_HEIGHT * SPRITE_SCALE_Y,
+        rectWidth: SPRITE_HEIGHT * SPRITE_SCALE,
         rectHeight: WINDOW_HEIGHT
     }
 ];

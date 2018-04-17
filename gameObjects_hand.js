@@ -1,7 +1,7 @@
 import {gGameLogic} from "./game.js";
 import {
     STATE, PLAYER, SUIT, SPRITE_WIDTH,
-    SPRITE_SCALE_X, SPRITE_SCALE_Y, WINDOW_WIDTH, WINDOW_HEIGHT
+    SPRITE_SCALE, WINDOW_WIDTH, WINDOW_HEIGHT
 } from "./constants.js";
 
 // PRIVATE CONSTANTS
@@ -48,8 +48,8 @@ class TileSet {
         for (const tile of this.tileArray) {
             if (tile.selected) {
                 tile.selected = false;
-                tile.sprite.x = tile.origX;
-                tile.sprite.y = tile.origY;
+                tile.x = tile.origX;
+                tile.y = tile.origY;
                 this.selectCount--;
             }
         }
@@ -120,7 +120,7 @@ class TileSet {
         case PLAYER.LEFT:
         case PLAYER.RIGHT:
         default:
-            width = SPRITE_WIDTH * SPRITE_SCALE_X;
+            width = SPRITE_WIDTH * SPRITE_SCALE;
             break;
         }
 
@@ -134,22 +134,27 @@ class TileSet {
     }
 
     // Returns updated x, y
-    showTileSet(playerInfo, posX, posY) {
+    showTileSet(playerInfo, posX, posY, exposed) {
 
         let x = posX;
         let y = posY;
         const tileWidth = this.getTileWidth(playerInfo);
 
         for (const tile of this.tileArray) {
-            tile.sprite.x = x;
-            tile.sprite.y = y;
-            tile.sprite.angle = playerInfo.angle;
+            tile.x = x;
+            tile.y = y;
+            tile.angle = playerInfo.angle;
             if (playerInfo.id === PLAYER.BOTTOM) {
-                tile.sprite.scale.set(1.0, 1.0);
+                tile.scale = 1.0;
             } else {
-                tile.sprite.scale.set(SPRITE_SCALE_X, SPRITE_SCALE_Y);
+                tile.scale = SPRITE_SCALE;
             }
-            tile.sprite.visible = true;
+
+            if (playerInfo.id === PLAYER.BOTTOM) {
+                tile.showTile(true, true);
+            } else {
+                tile.showTile(true, exposed);
+            }
 
             switch (playerInfo.id) {
             case PLAYER.BOTTOM:
@@ -297,7 +302,7 @@ export class Hand {
         case PLAYER.LEFT:
         case PLAYER.RIGHT:
         default:
-            seperatorDistance = SPRITE_WIDTH * SPRITE_SCALE_X * separatorScale;
+            seperatorDistance = SPRITE_WIDTH * SPRITE_SCALE * separatorScale;
             break;
         }
 
@@ -342,7 +347,7 @@ export class Hand {
         }
 
         // Display all tilesets
-        ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y));
+        ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y, false));
 
         for (const tileset of this.exposedTileSetArray) {
             const sepDist = this.getSeperatorDistance(playerInfo);
@@ -364,7 +369,7 @@ export class Hand {
                 break;
             }
 
-            ({x, y} = tileset.showTileSet(playerInfo, x, y));
+            ({x, y} = tileset.showTileSet(playerInfo, x, y, true));
         }
     }
 
@@ -436,8 +441,8 @@ export class Hand {
 
                     if (maxSelect) {
                         if (tile.selected) {
-                            sprite.x = tile.origX;
-                            sprite.y = tile.origY;
+                            tile.x = tile.origX;
+                            tile.y = tile.origY;
                             tileSet.selectCount--;
                             tile.selected = !tile.selected;
                         } else if (tileSet.selectCount < maxSelect) {
@@ -461,9 +466,9 @@ export class Hand {
                             }
 
                             if (bSelectOk) {
-                                tile.origX = tile.sprite.x;
-                                tile.origY = tile.sprite.y;
-                                sprite.y -= 25;
+                                tile.origX = tile.x;
+                                tile.origY = tile.y;
+                                tile.y -= 25;
                                 tileSet.selectCount++;
                                 tile.selected = !tile.selected;
                             }
@@ -536,8 +541,8 @@ export class Hand {
 
                         if (maxSelect) {
                             if (tile.selected) {
-                                sprite.x = tile.origX;
-                                sprite.y = tile.origY;
+                                tile.x = tile.origX;
+                                tile.y = tile.origY;
                                 tileSet.selectCount--;
                                 tile.selected = !tile.selected;
                             } else if (tileSet.selectCount < maxSelect) {
@@ -569,26 +574,26 @@ export class Hand {
                                 }
 
                                 if (bSelectOk) {
-                                    tile.origX = sprite.x;
-                                    tile.origY = sprite.y;
+                                    tile.origX = tile.x;
+                                    tile.origY = tile.y;
 
-                                    switch (sprite.angle) {
+                                    switch (tile.angle) {
                                     case 270:
                                         // Player 1  (right)
-                                        sprite.x -= 25;
+                                        tile.x -= 25;
                                         break;
                                     case 180:
                                         // Player 2 (top)
-                                        sprite.y += 25;
+                                        tile.y += 25;
                                         break;
                                     case 90:
                                         // Player 3  (left)
-                                        sprite.x += 25;
+                                        tile.x += 25;
                                         break;
                                     case 0:
                                     default:
                                         // Player 0 (bottom)
-                                        sprite.y -= 25;
+                                        tile.y -= 25;
                                         break;
                                     }
                                     tileSet.selectCount++;

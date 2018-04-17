@@ -342,11 +342,11 @@ export class GameLogic {
             // CLAIM DISCARD? (for exposure/mahjong).            
 
             // Show tile
-            discardTile.sprite.x = 350;
-            discardTile.sprite.y = 475;
-            discardTile.sprite.angle = 0;
-            discardTile.sprite.scale.set(1.0, 1.0);
-            discardTile.sprite.visible = true;
+            discardTile.x = 350;
+            discardTile.y = 475;
+            discardTile.angle = 0;
+            discardTile.scale = 1.0;
+            discardTile.showTile(true, true);
 
             // Ask all players if the discard is wanted  (currPlayer == i automatically returns discard)
             const claimArray = [];

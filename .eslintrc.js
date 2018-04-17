@@ -27,7 +27,7 @@ module.exports = {
         "callback-return": "error",
         "camelcase": "error",
         "capitalized-comments": "error",
-        "class-methods-use-this": "error",
+        //"class-methods-use-this": "error",
         "comma-dangle": "error",
         "comma-spacing": "error",
         "comma-style": "error",

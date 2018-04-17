@@ -319,9 +319,6 @@ export class Card {
     rankHandArray14(hand) {
         const rankCardHands = [];
 
-        // Consolidate hand to test array
-        const test = hand.getTileArray();
-
         for (const group of this.validHandGroups) {
             for (const validHand of group.hands) {
                 // Add new Rank info for this validHand
@@ -333,7 +330,7 @@ export class Card {
                 };
                 rankCardHands.push(rankInfo);
 
-                this.rankHand(test, hand.isAllHidden(), rankInfo, validHand);
+                this.rankHand(hand, rankInfo, validHand);
             }
         }
 
@@ -346,10 +343,10 @@ export class Card {
     //  - test        - tile array of test hand
     //  - rankInfo    - rankInfo for test hand
     //  - validHand   - card hand
-    rankHand(test, isAllHidden, rankInfo, validHand) {
+    rankHand(hand, rankInfo, validHand) {
 
         // Rank is 0 if test hand has exposures and validHand is required to be concealed
-        if (validHand.concealed && !isAllHidden) {
+        if (validHand.concealed && !hand.isAllHidden()) {
             rankInfo.rank = 0;
 
             return;
@@ -429,110 +426,196 @@ export class Card {
         for (let minNum = start; minNum <= end; minNum += delta) {
             // Iterate over permutations of virtual suits
             for (const vsuitArray of permArray) {
-                // Rank components of hand
-                const rankComponentInfo = this.rankComponents(test, minNum, validHand, vsuitArray);
+                // Group tiles into matching components
+                const componentInfoArray = this.rankFormComponents(hand, minNum, validHand, vsuitArray);
+
+                // Calculate ranking
+                let rank = 0;
+                for (const componentInfo of componentInfoArray) {
+                    const comp = componentInfo.component;
+                    const count = componentInfo.tileArray.length;
+
+                    // Update rank based on number of matching tiles (count) with the component length (comp.count)
+                    // Each component is worth 100 * comp.count / 14.
+                    rank += (100 * comp.count / 14) * (count / comp.count);
+                }
 
                 // Use maximum rank of all permutations
-                if (rankComponentInfo.rank > rankInfo.rank) {
-                    rankInfo.rank = rankComponentInfo.rank;
-                    rankInfo.componentInfoArray = rankComponentInfo.componentInfoArray;
+                if (rank > rankInfo.rank) {
+                    rankInfo.rank = rank;
+                    rankInfo.componentInfoArray = componentInfoArray;
                 }
             }
         }
     }
 
-    rankComponents(test, minNum, validHand, vsuitArray) {
-        const rankComponentInfo = {
-            rank: 0,
-            // Array of component info (including tile array for each component found)
-            componentInfoArray: []
+    // Try to match given tile set with given component
+    // Input - test (tile array of tile set, do not modify)
+    // Return - matchInfo.match, matchInfo.tileArray, length of array = (0-n) tiles that match the component, where n = component size (in tiles)
+    rankMatchComp(test, minNum, comp, vsuitArray) {
+        let count = 0;
+        let compSuit = comp.suit;
+        let compNum = comp.number;
+        const matchInfo = {
+            match: false,
+            tileArray: []
+        };
+
+        if (test.length === 0) {
+            return matchInfo;
         }
 
-        // Make copy of test array
-        const testCopy = [];
+        // Translate virtual suit to real suit using vsuitArray
+        if (compSuit >= SUIT.VSUIT1_DRAGON) {
+            compNum = vsuitArray[compSuit - SUIT.VSUIT1_DRAGON];
+            compSuit = SUIT.DRAGON;
+        } else if (compSuit >= SUIT.VSUIT1) {
+            // VSUIT
+            compSuit = vsuitArray[compSuit - SUIT.VSUIT1];
+
+            //  VNUMBER
+            if (compNum > 9) {
+                compNum = minNum + compNum - VNUMBER.CONSECUTIVE1;
+            }
+        }
+
         for (const tile of test) {
-            testCopy.push(tile);
+            let match = false;
+            if (tile.suit === compSuit && tile.number === compNum) {
+                match = true;
+            } else if (tile.suit === SUIT.JOKER) {
+                match = true;
+            }
+
+            if (match) {
+                count++;
+                matchInfo.tileArray.push(tile);
+
+                if (count === comp.count) {
+                    break;
+                }
+            }
         }
 
-        for (const comp of validHand.components) {
-            let count = 0;
-            let compSuit = comp.suit;
-            let compNum = comp.number;
+        if ((test.length === comp.count) && (matchInfo.tileArray.length === comp.count)) {
+            // Perfect match
+            matchInfo.match = true;
+        }
 
+        return matchInfo;
+    }
+
+    rankFormComponents(hand, minNum, validHand, vsuitArray) {
+
+        // Init ranking results  (return value)
+        const componentInfoArray = [];
+        for (const comp of validHand.components) {
             // Component Info - return actual tiles representing the component.
             // AI needs this for pong/kong/quint decisions
             const componentInfo = {
                 component: comp,
                 tileArray: []
             };
+            componentInfoArray.push(componentInfo);
+        }
 
-            rankComponentInfo.componentInfoArray.push(componentInfo);
+        // Remaining components infos
+        const remCompInfo = [];
+        for (const componentInfo of componentInfoArray) {
+            remCompInfo.push(componentInfo);
+        }
 
-            // Translate virtual suit to real suit using vsuitArray
-            if (compSuit >= SUIT.VSUIT1_DRAGON) {
-                compNum = vsuitArray[compSuit - SUIT.VSUIT1_DRAGON];
-                compSuit = SUIT.DRAGON;
-            } else if (compSuit >= SUIT.VSUIT1) {
-                // VSUIT
-                compSuit = vsuitArray[compSuit - SUIT.VSUIT1];
+        // To avoid errors in matching, match components to tiles in the following order:
+        // 1. Exposed tiles (including exposed jokers)
+        // 2. Hidden tiles (excluding jokers)
+        // 3. Hidden Jokers
 
-                //  VNUMBER
-                if (compNum > 9) {
-                    compNum = minNum + compNum - VNUMBER.CONSECUTIVE1;
+        // 1. Handle Exposed tilesets
+        for (const tileSet of hand.exposedTileSetArray) {
+
+            for (const componentInfo of componentInfoArray) {
+                const comp = componentInfo.component;
+                const matchInfo = this.rankMatchComp(tileSet.tileArray, minNum, comp, vsuitArray);
+                if (!matchInfo.match) {
+                    // These must match exactly to the component. Otherwise, we stop.
+                    return componentInfoArray;
+                }
+
+                // Exactly matching component
+                componentInfo.tileArray = matchInfo.tileArray;
+
+                // Remove this component from the remaining components array
+                const index = remCompInfo.indexOf(componentInfo);
+                if (index !== -1) {
+                    remCompInfo.splice(index, 1);
                 }
             }
-            // Search testCopy for tiles that match components
-            let found = false;
-            do {
-                found = false;
-                for (const tile of testCopy) {
-                    if (tile.suit === compSuit && tile.number === compNum) {
-                        // Found tile match
-                        found = true;
-                        componentInfo.tileArray.push(tile);
+        }
 
-                        // Remove tile from testCopy array
-                        const index = testCopy.indexOf(tile);
-                        testCopy.splice(index, 1);
+        // Remaining hidden tiles
+        const remHiddenTiles = hand.getHiddenTileArray();
+        const remHiddenTilesWithoutJokers = [];
+        const remHiddenJokers = [];
 
-                        count++;
+        for (const tile of remHiddenTiles) {
+            if (tile.suit === SUIT.JOKER) {
+                remHiddenJokers.push(tile);
+            } else {
+                remHiddenTilesWithoutJokers.push(tile);
+            }
+        }
+
+        // 2. Handle Hidden tiles (without jokers)
+        for (const componentInfo of remCompInfo) {
+            const comp = componentInfo.component;
+            const matchInfo = this.rankMatchComp(remHiddenTilesWithoutJokers, minNum, comp, vsuitArray);
+
+            componentInfo.tileArray = matchInfo.tileArray;
+
+            // Remove the tiles from the remaining tiles array
+            for (const tile of matchInfo.tileArray) {
+                const index = remHiddenTilesWithoutJokers.indexOf(tile);
+                if (index !== -1) {
+                    remHiddenTilesWithoutJokers.splice(index, 1);
+                }
+            }
+        }
+
+        // 3. Handle Hidden Jokers
+        //    Add jokers to pong/kongs/quints (if needed)
+
+        for (const joker of remHiddenJokers) {
+            let comp2 = null;
+            let comp1 = null;
+            let compAny = null;
+            for (const componentInfo of remCompInfo) {
+                const delta = componentInfo.component.count - componentInfo.tileArray.length;
+                if ((componentInfo.component.count >= 3) && delta) {
+                    switch (delta) {
+                    case 2:
+                        comp2 = componentInfo;
+                        break;
+                    case 1:
+                        comp1 = componentInfo;
+                        break;
+                    default:
+                        compAny = componentInfo;
                         break;
                     }
                 }
+            }
 
-                if (!found && (comp.count > 2)) {
-                    // Tile not found, use joker if possible
-                    // - component count > 2 (i.e. no single or pair)
-
-                    for (const tile of testCopy) {
-                        if (tile.suit === SUIT.JOKER) {
-                            // Found tile match
-                            found = true;
-
-                            // DO NOT insert joker into component tile array, as this will fix the joker to this particular combination.
-                            // Make joker decision later when tile is discarded.
-                            // componentInfo.tileArray.push(tile);
-
-                            // Remove tile from testCopy array
-                            const index = testCopy.indexOf(tile);
-                            testCopy.splice(index, 1);
-
-                            count++;
-                            break;
-                        }
-                    }
-                }
-
-            } while (found && count < comp.count);
-
-            // Update rank based on number of matching tiles (count) with the component length (comp.count)
-            // Each component is worth 100 * comp.count / 14.
-            rankComponentInfo.rank += (100 * comp.count / 14) * (count / comp.count);
+            // Add joker
+            if (comp1) {
+                comp1.tileArray.push(joker);
+            } else if (comp2) {
+                comp2.tileArray.push(joker);
+            } else if (compAny) {
+                compAny.tileArray.push(joker);
+            }
         }
 
-        this.debugTrace("rankComponents: rank = " + rankComponentInfo.rank + "\n");
-
-        return rankComponentInfo;
+        return componentInfoArray;
     }
 
     sortHandRankArray(rankCardHands) {

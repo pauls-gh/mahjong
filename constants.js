@@ -3,8 +3,7 @@ export const WINDOW_HEIGHT = 648,
     WINDOW_WIDTH = 1052,
     SPRITE_HEIGHT = 69,
     SPRITE_WIDTH = 52,
-    SPRITE_SCALE_X = 0.75,
-    SPRITE_SCALE_Y = 0.75;
+    SPRITE_SCALE = 0.75;
 
 // Game state
 export const STATE = {

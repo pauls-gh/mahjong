@@ -88,9 +88,66 @@ export class Tile {
     }
 
     create() {
-        this.sprite = game.add.sprite(this.x, this.y, "tiles", this.spriteName);
+        this.sprite = game.add.sprite(0, 0, "tiles", this.spriteName);
         this.sprite.visible = false;
         this.sprite.anchor.setTo(0.5, 0.5);
+
+        this.spriteBack = game.add.sprite(0, 0, "back");
+        this.spriteBack.visible = false;
+        this.spriteBack.anchor.setTo(0.5, 0.5);
+    }
+
+    get x() {
+        return this.sprite.x;
+    }
+
+    get y() {
+        return this.sprite.y;
+    }
+
+    get angle() {
+        return this.sprite.angle;
+    }
+
+    set x(x) {        
+        this.sprite.x = x;
+        this.spriteBack.x = x;
+    }
+
+    set y(y) {
+        this.sprite.y = y;
+        this.spriteBack.y = y;
+    }
+
+    set angle(angle) {
+        this.sprite.angle = angle;
+        this.spriteBack.angle = angle;
+
+    }
+
+    set scale(scale) {
+        this.sprite.scale.set(scale, scale);
+        this.spriteBack.scale.set(scale, scale);
+    }
+
+
+    showTile(visible, faceUp) {
+        this.sprite.visible = false;
+        this.spriteBack.visible = false;
+
+        if (visible) {
+            if (faceUp) {
+                this.sprite.visible = true;
+            } else {
+                this.spriteBack.visible = true;
+            }
+        }
+
+        // Debug - all tiles face up
+        if (1) {
+            this.sprite.visible = visible;
+            this.spriteBack.visible = false;
+        }
     }
 
     getText() {
@@ -175,7 +232,7 @@ export class Wall {
     }
 
     insert(tile) {
-        tile.sprite.visible = false;
+        tile.showTile(false, false);
         this.tileArray.push(tile);
     }
 
@@ -212,11 +269,11 @@ export class Discards {
         let offsetY = 200;
         for (const tile of this.tileArray) {
             const DISCARD_SCALE = 0.5;
-            tile.sprite.x = offsetX;
-            tile.sprite.y = offsetY;
-            tile.sprite.angle = 0;
-            tile.sprite.scale.set(DISCARD_SCALE, DISCARD_SCALE);
-            tile.sprite.visible = true;
+            tile.x = offsetX;
+            tile.y = offsetY;
+            tile.angle = 0;
+            tile.scale = DISCARD_SCALE;
+            tile.showTile(true, true);
 
             offsetX += SPRITE_WIDTH * DISCARD_SCALE;
 

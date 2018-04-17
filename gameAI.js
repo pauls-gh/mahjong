@@ -87,7 +87,6 @@ export class GameAI {
         // Sort  (higher => lower). We want to discard tiles that have the least negative impact.
         tileRankArray.sort((a, b) => b.rank - a.rank);
 
-        // PS TEST
         if (debug) {
             this.debugPrint("****************");
             this.card.sortHandRankArray(rankCardHands);
@@ -237,63 +236,19 @@ export class GameAI {
     // Test if this component is suitable for exposure
     //
     // Input: - compInfo.tileArray with discardTile as one of the tiles
-    //        - compInfo.tileArray will not include jokers
+    //          Guaranteed to be hidden.
     // Output: true - exposure ok (pong/kong/quint)
     validateComponentForExposure(player, compInfo, discardTile) {
-        // Original hand (without discardTile added)
-        const hand = this.table.players[player].hand;
-        const hiddenTileArray = hand.getHiddenTileArray();
 
         // Reject single/pairs components
         if (compInfo.component.count < 3) {
             return false;
         }
 
-        // Make sure all tiles of the component are hidden (not already exposed)
-        for (const compTile of compInfo.tileArray) {
-            if (compTile === discardTile) {
-                continue;
-            }
-            if (hiddenTileArray.indexOf(compTile) === -1) {
-                return false;
-            }
-        }
-
-
-        // Correct length and jokerless?  (compInfo.tileArray will not include jokers)
-        if (compInfo.tileArray.length === compInfo.component.count) {
-            // Test to make sure we don't already have a pong/kong/quint of this size in our hand (hidden tiles only)
-            let count = 0;
-            for (const tile of hiddenTileArray) {
-                if (discardTile.suit === tile.suit && discardTile.number === tile.number) {
-                    count++;
-                }
-            }
-            if (count >= compInfo.component.count) {
-                return false;
-            }
-
-            return true;
-        }
-
-        // At this point, we'll need jokers to complete the pong/kong/quint
-        const jokerArray = hand.getHiddenJokers();
-
-        if (!jokerArray.length) {
+        if (compInfo.tileArray.length !== compInfo.component.count) {
             return false;
         }
-
-        const requiredJokers = compInfo.component.count - compInfo.tileArray.length;
-
-        if (requiredJokers > jokerArray.length) {
-            return false;
-        }
-
-        // Add jokers to component tile array
-        for (let i = 0; i < requiredJokers; i++) {
-            compInfo.tileArray.push(jokerArray[i]);
-        }
-
+        
         return true;
     }
 

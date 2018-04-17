@@ -23,6 +23,7 @@ init();
 // PHASER.IO
 function preload() {
     game.load.atlasJSONHash("tiles", "assets/tiles.png", "assets/tiles.json");
+    game.load.image("back", "assets/back.png");
 }
 
 function create() {
