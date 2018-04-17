@@ -9,7 +9,7 @@ import {
 
 // PRIVATE GLOBALS
 
-class TileSet {
+export class TileSet {
     constructor(inputEnabled) {
         this.tileArray = [];
         this.inputEnabled = inputEnabled;

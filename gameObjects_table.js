@@ -131,13 +131,25 @@ export class Table {
             if (!initPlayerHand) {
                 continue;
             }
-            while (initPlayerHand.getLength()) {
-                // Init Player  hand with given tiles
-                // This is useful for testing / training mode
-                const findTile = initPlayerHand.hiddenTileSet.tileArray.pop();
+
+            // Hidden
+            for (let i = 0; i < initPlayerHand.hiddenTileSet.getLength(); i++) {
+                const findTile = initPlayerHand.hiddenTileSet.tileArray[i];
                 const tile = this.wall.findAndRemove(findTile);
                 this.players[player].hand.insertHidden(tile);
             }
+
+            // Exposed
+            for (const tileSet of initPlayerHand.exposedTileSetArray) {
+                const tileArray = [];
+                for (let i = 0; i < tileSet.getLength(); i++) {
+                    const findTile = tileSet.tileArray[i];
+                    const tile = this.wall.findAndRemove(findTile);
+                    tileArray.push(tile);
+                }
+                this.players[player].hand.insertExposed(tileArray);
+            }
+
         }
 
         // Deal remainder of tiles from wall

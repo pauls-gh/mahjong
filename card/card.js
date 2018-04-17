@@ -453,7 +453,6 @@ export class Card {
     // Input - test (tile array of tile set, do not modify)
     // Return - matchInfo.match, matchInfo.tileArray, length of array = (0-n) tiles that match the component, where n = component size (in tiles)
     rankMatchComp(test, minNum, comp, vsuitArray) {
-        let count = 0;
         let compSuit = comp.suit;
         let compNum = comp.number;
         const matchInfo = {
@@ -488,16 +487,14 @@ export class Card {
             }
 
             if (match) {
-                count++;
                 matchInfo.tileArray.push(tile);
-
-                if (count === comp.count) {
+                if (matchInfo.tileArray.length === comp.count) {
                     break;
                 }
             }
         }
 
-        if ((test.length === comp.count) && (matchInfo.tileArray.length === comp.count)) {
+        if (test.length === comp.count && matchInfo.tileArray.length === comp.count ) {
             // Perfect match
             matchInfo.match = true;
         }
@@ -533,22 +530,25 @@ export class Card {
         // 1. Handle Exposed tilesets
         for (const tileSet of hand.exposedTileSetArray) {
 
-            for (const componentInfo of componentInfoArray) {
-                const comp = componentInfo.component;
-                const matchInfo = this.rankMatchComp(tileSet.tileArray, minNum, comp, vsuitArray);
-                if (!matchInfo.match) {
-                    // These must match exactly to the component. Otherwise, we stop.
-                    return componentInfoArray;
-                }
+            let matchInfo = null;
+            for (const componentInfo of remCompInfo) {
+                matchInfo = this.rankMatchComp(tileSet.tileArray, minNum, componentInfo.component, vsuitArray);
+                if (matchInfo.match) {
+                    // Exactly matching component
+                    componentInfo.tileArray = matchInfo.tileArray;
 
-                // Exactly matching component
-                componentInfo.tileArray = matchInfo.tileArray;
-
-                // Remove this component from the remaining components array
-                const index = remCompInfo.indexOf(componentInfo);
-                if (index !== -1) {
-                    remCompInfo.splice(index, 1);
+                    // Remove this component from the remaining components array
+                    const index = remCompInfo.indexOf(componentInfo);
+                    if (index !== -1) {
+                        remCompInfo.splice(index, 1);
+                    }                     
+                    break;
                 }
+            }
+
+            if (!matchInfo.match) {
+                // Exposures must match exactly to the component. Otherwise, we stop.
+                return componentInfoArray;
             }
         }
 
