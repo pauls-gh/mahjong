@@ -1,4 +1,4 @@
-import {SUIT, VNUMBER} from "../constants.js";
+import {SUIT, VNUMBER} from "../../constants.js";
 
 // Rules for describing hands
 //  - put exact singles (non-virtual suit) first in components array
