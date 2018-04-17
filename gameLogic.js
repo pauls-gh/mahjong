@@ -1,4 +1,4 @@
-import {game, printMessage, printInfo} from "./game.js";
+import {game, printMessage, printInfo, debugPrint, debugTrace} from "./game.js";
 import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND} from "./constants.js";
 import {GameAI} from "./gameAI.js";
 import {Card} from "./card/card.js";
@@ -98,7 +98,7 @@ export class GameLogic {
         const initPlayerHandArray = [null, null, null, null];
 
 
-        if (1) {
+        if (0) {
             // Player 0  (14 tiles)
             const hand = new Hand(false);
             initPlayerHandArray[0] = hand;
@@ -126,7 +126,7 @@ export class GameLogic {
             hand.insertHidden(new Tile(SUIT.JOKER, 0));            
         } 
 
-        if (1) {
+        if (0) {
             // Player 1  (13 tiles)
             const hand = new Hand(false);
             initPlayerHandArray[1] = hand;
@@ -191,7 +191,7 @@ export class GameLogic {
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
         
         // debugging - skip charleston
-        if (1) {
+        if (0) {
             this.loop();
         } else {
             this.charleston();
@@ -413,9 +413,9 @@ export class GameLogic {
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
 
         if (tile) {
-            const text = tile.getText();
-            printMessage("Player " + this.currPlayer + " picks " +  text + " from wall\n");
-    
+            printMessage("Player " + this.currPlayer + " picks from wall\n");
+            debugPrint("Player " + this.currPlayer + " picks " +  tile.getText() + " from wall\n");
+
             this.table.players[this.currPlayer].hand.insertHidden(tile);
             this.table.players[this.currPlayer].showHand();
             
@@ -1084,5 +1084,5 @@ export class GameLogic {
 
     sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
-      }    
+    }       
 }

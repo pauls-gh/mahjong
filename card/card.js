@@ -1,3 +1,4 @@
+import {debugPrint, debugTrace, gdebug} from "../game.js";
 import {Tile} from "../gameObjects.js";
 import {Hand} from "../gameObjects_hand.js";
 import {SUIT, DRAGON, WIND, VNUMBER} from "../constants.js";
@@ -29,8 +30,6 @@ const validHandGroups2017 = [
 ];
 
 // PRIVATE GLOBALS
-const debug = 1;
-const trace = 0;
 
 
 // Currently support 2017 card
@@ -115,14 +114,14 @@ export class Card {
             // Validate hand
             for (const validHand of group.hands) {
 
-                this.debugTrace("Match hand: " + validHand.description + "\n");
+                debugTrace("Match hand: " + validHand.description + "\n");
 
                 if (this.matchHand(test, info, group, validHand)) {
-                    this.debugTrace("Match hand: found match\n");
+                    debugTrace("Match hand: found match\n");
                     found = true;
                     break outerLoop;
                 } else {
-                    this.debugTrace("Match hand: no match\n");
+                    debugTrace("Match hand: no match\n");
                 }
             }
 
@@ -205,7 +204,7 @@ export class Card {
         // Iterate over permutations of virtual suits
         for (const vsuitArray of permArray) {
 
-            this.debugTrace("VsuitArray = " + vsuitArray + "\n");
+            debugTrace("VsuitArray = " + vsuitArray + "\n");
 
             // Validate components of hand
             match = this.matchComponents(test, info, validHand, vsuitArray);
@@ -234,7 +233,7 @@ export class Card {
             let compSuit = comp.suit;
             let compNum = comp.number;
 
-            this.debugTrace("Component index: " + compIndex + "\n");
+            debugTrace("Component index: " + compIndex + "\n");
 
             // Translate virtual suit to real suit using vsuitArray
             if (compSuit >= SUIT.VSUIT1_DRAGON) {
@@ -287,9 +286,9 @@ export class Card {
             } while (found && (count < comp.count));
 
             if (count === comp.count) {
-                this.debugTrace("Component Match: yes\n");
+                debugTrace("Component Match: yes\n");
             } else {
-                this.debugTrace("Component Match: no\n");
+                debugTrace("Component Match: no\n");
                 match = false;
                 break;
             }
@@ -301,17 +300,17 @@ export class Card {
     }
 
     printValidationInfo(info) {
-        if (!debug) {
+        if (!gdebug) {
             return;
         }
-        this.debugPrint("valid = " + info.valid + "\n");
-        this.debugPrint("tileCount = " + info.tileCount + "\n");
-        this.debugPrint("minNum = " + info.minNum + "\n");
+        debugPrint("valid = " + info.valid + "\n");
+        debugPrint("tileCount = " + info.tileCount + "\n");
+        debugPrint("minNum = " + info.minNum + "\n");
         let suitStr = "";
         for (const suit of info.suits) {
             suitStr += suit + ", ";
         }
-        this.debugPrint("suit(s) = " + suitStr + "\n");
+        debugPrint("suit(s) = " + suitStr + "\n");
     }
 
     // Given hand (must be 14 tiles), rank against all card hands
@@ -494,7 +493,7 @@ export class Card {
             }
         }
 
-        if (test.length === comp.count && matchInfo.tileArray.length === comp.count ) {
+        if (test.length === comp.count && matchInfo.tileArray.length === comp.count) {
             // Perfect match
             matchInfo.match = true;
         }
@@ -541,7 +540,7 @@ export class Card {
                     const index = remCompInfo.indexOf(componentInfo);
                     if (index !== -1) {
                         remCompInfo.splice(index, 1);
-                    }                     
+                    }
                     break;
                 }
             }
@@ -623,7 +622,7 @@ export class Card {
     }
 
     printHandRankArray(rankCardHands, elemCount) {
-        this.debugPrint("Hand Rank Info\n");
+        debugPrint("Hand Rank Info\n");
 
         let count = rankCardHands.length;
         if (elemCount) {
@@ -632,9 +631,9 @@ export class Card {
 
         for (let i = 0; i < count; i++) {
             const rankInfo = rankCardHands[i];
-            this.debugPrint("Group = " + rankInfo.group.groupDescription + "\n");
-            this.debugPrint("Hand = " + rankInfo.hand.description + "\n");
-            this.debugPrint("Rank = " + rankInfo.rank + "\n");
+            debugPrint("Group = " + rankInfo.group.groupDescription + "\n");
+            debugPrint("Hand = " + rankInfo.hand.description + "\n");
+            debugPrint("Rank = " + rankInfo.rank + "\n");
 
             // Components
             let str = "";
@@ -644,21 +643,8 @@ export class Card {
                     str += tile.getText() + " ";
                 }
             }
-            this.debugPrint(str);
+            debugPrint(str);
         }
     }
-
-    debugPrint(str) {
-        if (debug) {
-            console.log(str);
-        }
-    }
-
-    debugTrace(str) {
-        if (trace) {
-            console.log(str);
-        }
-    }
-
 }
 

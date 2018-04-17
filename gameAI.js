@@ -1,10 +1,8 @@
-import {gGameLogic} from "./game.js";
+import {gGameLogic, debugPrint, debugTrace, gdebug} from "./game.js";
 import {STATE, PLAYER_OPTION, PLAYER, SUIT, VNUMBER, DRAGON, WIND} from "./constants.js";
 import {Tile} from "./gameObjects.js";
 
 // PRIVATE CONSTANTS
-const debug = 1;
-const trace = 0;
 
 // PRIVATE GLOBALS
 
@@ -87,8 +85,8 @@ export class GameAI {
         // Sort  (higher => lower). We want to discard tiles that have the least negative impact.
         tileRankArray.sort((a, b) => b.rank - a.rank);
 
-        if (debug) {
-            this.debugPrint("****************");
+        if (gdebug) {
+            debugPrint("****************");
             this.card.sortHandRankArray(rankCardHands);
             this.card.printHandRankArray(rankCardHands, 3);
             this.printTileRankArray(tileRankArray, 3);
@@ -98,7 +96,7 @@ export class GameAI {
     }
 
     printTileRankArray(tileRankArray, elemCount) {
-        this.debugPrint("Tile Rank Info\n");
+        debugPrint("Tile Rank Info\n");
 
         let count = tileRankArray.length;
         if (elemCount) {
@@ -106,8 +104,8 @@ export class GameAI {
         }
         for (let i = 0; i < count; i++) {
             const rankInfo = tileRankArray[i];
-            this.debugPrint("Tile = " + rankInfo.tile.getText() + "\n");
-            this.debugPrint("Rank = " + rankInfo.rank + "\n");
+            debugPrint("Tile = " + rankInfo.tile.getText() + "\n");
+            debugPrint("Rank = " + rankInfo.rank + "\n");
         }
     }
 
@@ -154,7 +152,7 @@ export class GameAI {
                 rank += (copyHandRankArray[j].rank - rankCardHands[j].rank);
             }
 
-            this.debugPrint("exchangeTilesForJokers.  Joker found for exchange. rank = " + rank + "\n");
+            debugPrint("exchangeTilesForJokers.  Joker found for exchange. rank = " + rank + "\n");
 
             if (rank > bestRank) {
                 bestRank = rank;
@@ -163,7 +161,7 @@ export class GameAI {
         }
 
         if (bestTile && (bestRank > 0)) {
-            this.debugPrint("exchangeTilesForJokers. bestRank = " + bestRank + "\n");
+            debugPrint("exchangeTilesForJokers. bestRank = " + bestRank + "\n");
 
             // Hand improved with joker.  Make the exchange in the real hand.
             this.table.exchangeJoker(currPlayer, hand, bestTile);
@@ -248,7 +246,7 @@ export class GameAI {
         if (compInfo.tileArray.length !== compInfo.component.count) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -350,7 +348,7 @@ export class GameAI {
         const rankInfo = rankCardHands[0];
         const rank = rankInfo.rank;
 
-        this.debugPrint("courtesyVote: Player " + player + ", rank = " + rank);
+        debugPrint("courtesyVote: Player " + player + ", rank = " + rank);
         this.card.printHandRankArray(rankCardHands, 1);
 
         if (rank < 50) {
@@ -379,18 +377,6 @@ export class GameAI {
         }
 
         return pass;
-    }
-
-    debugPrint(str) {
-        if (debug) {
-            console.log(str);
-        }
-    }
-
-    debugTrace(str) {
-        if (trace) {
-            console.log(str);
-        }
     }
 
 }
