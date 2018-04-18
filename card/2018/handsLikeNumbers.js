@@ -91,13 +91,13 @@ export const handsLikeNumbers = {
                     suit: SUIT.VSUIT2_DRAGON,
                     number: 0,
                     count: 3
-                },                                
+                },
                 {
                     suit: SUIT.VSUIT3,
                     number: VNUMBER.CONSECUTIVE1,
                     count: 4
                 }
             ]
-        }        
+        }
     ]
 }

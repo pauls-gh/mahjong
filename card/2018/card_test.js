@@ -78,6 +78,37 @@ export class CardTest2018 {
 
         }
 
+        {
+
+            // FFFF NNNN DD SSSS (red dragon only)
+            const hand = new Hand(false);
+
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            
+
+
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.NORTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.NORTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.NORTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.NORTH));
+            
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.SOUTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.SOUTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.SOUTH));
+            hand.insertHidden(new Tile(SUIT.WIND, WIND.SOUTH));
+
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
+            
+            debugPrint("FFFF NNNN DD SSSS (red dragon only)\n");
+
+            const validationInfo = this.card.validateHand14(hand);
+            this.card.printValidationInfo(validationInfo);
+
+        }        
     }
 
 }
