@@ -467,60 +467,60 @@ export const handsSinglesPairs = {
         },
         {
             description: "FF 2017 DD 2017 DD  (bams and craks only)",
-            vsuitCount: 3,
+            vsuitCount: 0,
             concealed: true,
             odd: false,
             even: false,
             components: [
+                {
+                    suit: SUIT.BAM,
+                    number: 2,
+                    count: 1
+                },
+                {
+                    suit: SUIT.DRAGON,
+                    number: DRAGON.WHITE,
+                    count: 1
+                },
+                {
+                    suit: SUIT.BAM,
+                    number: 1,
+                    count: 1
+                },
+                {
+                    suit: SUIT.BAM,
+                    number: 7,
+                    count: 1
+                },
+                {
+                    suit: SUIT.CHAR,
+                    number: 2,
+                    count: 1
+                },
+                {
+                    suit: SUIT.DRAGON,
+                    number: DRAGON.WHITE,
+                    count: 1
+                },
+                {
+                    suit: SUIT.CHAR,
+                    number: 1,
+                    count: 1
+                },
+                {
+                    suit: SUIT.CHAR,
+                    number: 7,
+                    count: 1
+                },
                 {
                     suit: SUIT.FLOWER,
                     number: 0,
                     count: 2
                 },
                 {
-                    suit: SUIT.BAM,
-                    number: 2,
-                    count: 1
-                },
-                {
-                    suit: SUIT.DRAGON,
-                    number: DRAGON.WHITE,
-                    count: 1
-                },
-                {
-                    suit: SUIT.BAM,
-                    number: 1,
-                    count: 1
-                },
-                {
-                    suit: SUIT.BAM,
-                    number: 7,
-                    count: 1
-                },
-                {
                     suit: SUIT.DRAGON,
                     number: DRAGON.GREEN,
                     count: 2
-                },
-                {
-                    suit: SUIT.CHAR,
-                    number: 2,
-                    count: 1
-                },
-                {
-                    suit: SUIT.DRAGON,
-                    number: DRAGON.WHITE,
-                    count: 1
-                },
-                {
-                    suit: SUIT.CHAR,
-                    number: 1,
-                    count: 1
-                },
-                {
-                    suit: SUIT.CHAR,
-                    number: 7,
-                    count: 1
                 },
                 {
                     suit: SUIT.DRAGON,

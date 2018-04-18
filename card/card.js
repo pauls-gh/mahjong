@@ -20,7 +20,7 @@ export class Card {
         this.validHandGroups = validHandGroups2018;
 
         // Debug only
-        if (1) {
+        if (0) {
             const cardTest = new CardTest2018(this);
             cardTest.test();
         }

@@ -108,7 +108,38 @@ export class CardTest2018 {
             const validationInfo = this.card.validateHand14(hand);
             this.card.printValidationInfo(validationInfo);
 
-        }        
+        }     
+        
+        
+        {
+
+            // FF 22 44 66 88 22 22 (3 suits, any like even pairs, concealed)
+            const hand = new Hand(false);
+
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
+
+            hand.insertHidden(new Tile(SUIT.CHAR, 2));
+            hand.insertHidden(new Tile(SUIT.CHAR, 2));
+            hand.insertHidden(new Tile(SUIT.CHAR, 4));
+            hand.insertHidden(new Tile(SUIT.CHAR, 4));
+            hand.insertHidden(new Tile(SUIT.CHAR, 6));
+            hand.insertHidden(new Tile(SUIT.CHAR, 6));
+            hand.insertHidden(new Tile(SUIT.CHAR, 8));
+            hand.insertHidden(new Tile(SUIT.CHAR, 8));
+
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+            hand.insertHidden(new Tile(SUIT.BAM, 4));
+
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+            hand.insertHidden(new Tile(SUIT.DOT, 4));
+
+            debugPrint("FF 22 44 66 88 22 22 (3 suits, any like even pairs, concealed)\n");
+
+            const validationInfo = this.card.validateHand14(hand);
+            this.card.printValidationInfo(validationInfo);
+
+        } 
     }
 
 }
