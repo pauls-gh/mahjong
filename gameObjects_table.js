@@ -136,7 +136,9 @@ export class Table {
             for (let i = 0; i < initPlayerHand.hiddenTileSet.getLength(); i++) {
                 const findTile = initPlayerHand.hiddenTileSet.tileArray[i];
                 const tile = this.wall.findAndRemove(findTile);
-                this.players[player].hand.insertHidden(tile);
+                if (tile) {
+                    this.players[player].hand.insertHidden(tile);
+                }
             }
 
             // Exposed
@@ -145,7 +147,9 @@ export class Table {
                 for (let i = 0; i < tileSet.getLength(); i++) {
                     const findTile = tileSet.tileArray[i];
                     const tile = this.wall.findAndRemove(findTile);
-                    tileArray.push(tile);
+                    if (tile) {
+                        tileArray.push(tile);
+                    }
                 }
                 this.players[player].hand.insertExposed(tileArray);
             }

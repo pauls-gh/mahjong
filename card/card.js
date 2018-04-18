@@ -24,6 +24,78 @@ export class Card {
             const cardTest = new CardTest2018(this);
             cardTest.test();
         }
+
+        // Debug only
+        if (0) {
+            for (const group of this.validHandGroups) {
+                for (const validHand of group.hands) {
+                    const hand = this.generateHand(validHand.description);
+                    if (!this.validateHand14(hand)) {
+                        console.log("ERROR - generateHand produced invalid hand\n");
+                    }
+                }
+            }  
+        }
+    }
+
+    generateHand(handDescription, numTiles) {
+        const vsuitArray = [SUIT.CHAR, SUIT.BAM, SUIT.DOT];
+        const hand = new Hand(false);
+        let foundHand = null;
+        let insertCount = 0;
+
+        if (!numTiles) {
+            numTiles = 14;
+        }
+
+        // Find matching hand description
+        outerLoop:
+        for (const group of this.validHandGroups) {
+            for (const validHand of group.hands) {
+                if (validHand.description === handDescription) {
+                    foundHand = validHand;
+                    break outerLoop;
+                }
+            }
+        }
+
+        if (!foundHand) {
+            return hand;
+        }
+
+        outerLoop2:
+        for (const comp of foundHand.components) {
+            let suit = comp.suit;
+            let number = comp.number;
+
+            let minNum = 1;
+            if (hand.even) {
+                minNum = 2;
+            }
+            // Translate virtual suit to real suit using vsuitArray
+            if (suit >= SUIT.VSUIT1_DRAGON) {
+                number = vsuitArray[suit - SUIT.VSUIT1_DRAGON];
+                suit = SUIT.DRAGON;
+            } else if (suit >= SUIT.VSUIT1) {
+                // VSUIT
+                suit = vsuitArray[suit - SUIT.VSUIT1];
+
+                //  VNUMBER
+                if (number > 9) {
+                    number = minNum + number - VNUMBER.CONSECUTIVE1;
+                }
+            }
+
+            for (let i = 0; i < comp.count; i++) {
+                hand.insertHidden(new Tile(suit, number));
+                insertCount++;
+                if (insertCount === numTiles) {
+                    break outerLoop2;
+                }
+            }
+        }
+
+        return hand;
     }
 
     validateHand14(hand) {

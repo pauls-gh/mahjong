@@ -34,7 +34,9 @@ export class TileSet {
     reset(wall) {
         // Reset tileset - return all tiles to wall
         while (this.tileArray.length) {
-            wall.insert(this.remove(this.tileArray[0]));
+            const tile = this.tileArray[0];
+            this.remove(tile);
+            wall.insert(tile);
         }
     }
 
@@ -287,6 +289,7 @@ export class Hand {
         for (const tileset of this.exposedTileSetArray) {
             tileset.reset(wall);
         }
+        this.exposedTileSetArray = [];
     }
 
     getSeperatorDistance(playerInfo) {

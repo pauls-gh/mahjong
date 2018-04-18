@@ -98,92 +98,24 @@ export class GameLogic {
         const initPlayerHandArray = [null, null, null, null];
 
 
-        if (0) {
+        if (1) {
             // Player 0  (14 tiles)
-            const hand = new Hand(false);
-            initPlayerHandArray[0] = hand;
+            initPlayerHandArray[0] = this.card.generateHand("222 444 6666 8888 (2 suit)", 1);;
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 1));
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.CHAR, 1));            
+                        
 
-            // FF 1111 DDDD 1111 (3 suits, like numbers)
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-            hand.insertHidden(new Tile(SUIT.DOT, 4));
-            //hand.insertHidden(new Tile(SUIT.DOT, 4));
-           // hand.insertHidden(new Tile(SUIT.DOT, 4));
-            //hand.insertHidden(new Tile(SUIT.DOT, 4));
-
-            //hand.insertHidden(new Tile(SUIT.BAM, 4));
-            //hand.insertHidden(new Tile(SUIT.BAM, 4));
-            //hand.insertHidden(new Tile(SUIT.BAM, 4));
-            hand.insertHidden(new Tile(SUIT.BAM, 4));
-
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
-            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
-            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));
-            //hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.RED));            
-            hand.insertHidden(new Tile(SUIT.DOT, 3));
-
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
+            //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
         } 
 
-        if (0) {
+        if (1) {
             // Player 1  (13 tiles)
-            const hand = new Hand(false);
-            initPlayerHandArray[1] = hand;
-
-            // Hand = FF 11111 22 33333 (1 suit, 3 consecutive numbers)
-
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-
-            hand.insertHidden(new Tile(SUIT.BAM, 7));
-            hand.insertHidden(new Tile(SUIT.BAM, 7));
-            hand.insertHidden(new Tile(SUIT.BAM, 7));
-
-            hand.insertHidden(new Tile(SUIT.BAM, 8));
-            hand.insertHidden(new Tile(SUIT.BAM, 8));                        
-
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));                        
-
-            const tileArray = [];
-            tileArray.push(new Tile(SUIT.BAM, 9));
-            tileArray.push(new Tile(SUIT.BAM, 9));
-            tileArray.push(new Tile(SUIT.BAM, 9));
-            tileArray.push(new Tile(SUIT.BAM, 9));
-            tileArray.push(new Tile(SUIT.JOKER, 0));
+            initPlayerHandArray[1] = this.card.generateHand("FFF 1111 FFF 1111 (any 2 suits)", 9);
+            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
+            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
+            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
             
-            // Create new "exposed" TileSet
-            const tileSet = new TileSet(false);
-            for (const tile of tileArray) {
-                tileSet.insert(tile);
-            }            
-            hand.exposedTileSetArray.push(tileSet);
-        }
-
-        if (0) {
-            // Player 2  (13 tiles)
-            const hand = new Hand(false);
-            initPlayerHandArray[2] = hand;
-
-            // FF 1111 DDDD 1111 (3 suits, like numbers)
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-            hand.insertHidden(new Tile(SUIT.FLOWER, 0));
-            hand.insertHidden(new Tile(SUIT.DOT, 3));
-            hand.insertHidden(new Tile(SUIT.DOT, 3));
-            //hand.insertHidden(new Tile(SUIT.DOT, 4));
-            hand.insertHidden(new Tile(SUIT.JOKER, 0));            
-            
-
-            hand.insertHidden(new Tile(SUIT.CHAR, 3));
-            hand.insertHidden(new Tile(SUIT.CHAR, 3));
-            hand.insertHidden(new Tile(SUIT.CHAR, 3));
-            //hand.insertHidden(new Tile(SUIT.BAM, 4));
-
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
-            hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
-
         }
 
         this.table.deal(initPlayerHandArray);
@@ -191,7 +123,7 @@ export class GameLogic {
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
         
         // debugging - skip charleston
-        if (0) {
+        if (1) {
             this.loop();
         } else {
             this.charleston();
