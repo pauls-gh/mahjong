@@ -24,8 +24,8 @@ export class Player {
     create() {
     }
 
-    showHand() {
-        this.hand.showHand(this.playerInfo);
+    showHand(forceFaceup) {
+        this.hand.showHand(this.playerInfo, forceFaceup);
     }
 }
 

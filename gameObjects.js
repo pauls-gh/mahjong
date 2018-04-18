@@ -144,7 +144,7 @@ export class Tile {
         }
 
         // Debug - all tiles face up
-        if (1) {
+        if (0) {
             this.sprite.visible = visible;
             this.spriteBack.visible = false;
         }

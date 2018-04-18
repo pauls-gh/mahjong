@@ -10,8 +10,8 @@
         }
     </style>
     <textarea id="messages" readonly></textarea>
+    <textarea id="info" readonly style="visibility: hidden"></textarea>
     <div id="buttondiv" style="visibility: hidden">
-        <textarea id="info" readonly></textarea>
         <button id="button1" class="button">button1</button>
         <button id="button2" class="button">button2</button>
         <button id="button3" class="button">button3</button>
@@ -25,14 +25,18 @@
     </div>    
     <style type="text/css">
         #buttondiv {
-            width: 300px;
-            height: 100px;
+            width: 500px;
+            height: 50px;
             position: absolute;
-            top: 454px;
+            top: 504px;
             left: 400px;
         }
         #info {
             width: 300px;
+            height: 30px;
+            position: absolute;
+            top: 454px;
+            left: 400px;
             resize: none;
         }
         .button {

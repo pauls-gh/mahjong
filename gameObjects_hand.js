@@ -325,7 +325,7 @@ export class Hand {
         return width;
     }
 
-    showHand(playerInfo) {
+    showHand(playerInfo, forceFaceup) {
         // Calculate starting position for all tiles in hand
         let x = playerInfo.x;
         let y = playerInfo.y;
@@ -350,7 +350,11 @@ export class Hand {
         }
 
         // Display all tilesets
-        ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y, false));
+        let exposed = false;
+        if (forceFaceup) {
+            exposed = true;
+        }
+        ({x, y} = this.hiddenTileSet.showTileSet(playerInfo, x, y, exposed));
 
         for (const tileset of this.exposedTileSetArray) {
             const sepDist = this.getSeperatorDistance(playerInfo);

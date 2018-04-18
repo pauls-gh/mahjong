@@ -100,16 +100,13 @@ export class GameLogic {
 
         if (1) {
             // Player 0  (14 tiles)
-            initPlayerHandArray[0] = this.card.generateHand("222 444 6666 8888 (2 suit)", 1);;
-            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 1));
-            initPlayerHandArray[0].insertHidden(new Tile(SUIT.CHAR, 1));            
-                        
+            initPlayerHandArray[0] = this.card.generateHand("222 444 6666 8888 (2 suit)", 14);;
 
             //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
             //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
         } 
 
-        if (1) {
+        if (0) {
             // Player 1  (13 tiles)
             initPlayerHandArray[1] = this.card.generateHand("FFF 1111 FFF 1111 (any 2 suits)", 9);
             initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
@@ -307,7 +304,7 @@ export class GameLogic {
                 skipPick = true;
 
                 const text = discardTile.getText();
-                printMessage("Player " + this.currPlayer + " claims " + text + " \n");
+                printMessage("Player " + this.currPlayer + " *claims* " + text + " \n");
             } else {
                 // Tile discarded - move to next player
                 this.currPlayer++;
@@ -776,6 +773,7 @@ export class GameLogic {
             button3.style.display = "none";
             button4.style.display = "none";            
             window.document.getElementById("buttondiv").style.visibility = "";
+            window.document.getElementById("info").style.visibility = "";
             this.wallText.visible = true;
             break;   
 
@@ -903,20 +901,44 @@ export class GameLogic {
             break;   
 
             case STATE.END:
+            printMessage("===============================\n");
             if (this.gameResult.mahjong) {
-                const validInfo = this.card.validateHand14(this.table.players[this.gameResult.winner].hand);
+                const hand = this.table.players[this.gameResult.winner].hand;
+                const validInfo = this.card.validateHand14(hand);
                 if (validInfo.valid) {
-                    printMessage("Game over - Mahjong by player " + this.gameResult.winner + "\n");
-                    printInfo("Game over - Mahjong by player " + this.gameResult.winner);
+                    const rankCardHands = this.card.rankHandArray14(hand);
+                    this.card.sortHandRankArray(rankCardHands);
+
+                    let str = "Game over - Mahjong by player " + this.gameResult.winner;
+                    printMessage(str + "\n");
+                    printInfo(str);
+                    debugPrint(str + "\n");
+
+                    str = "Group = " + rankCardHands[0].group.groupDescription + "\n"
+                    printMessage(str);
+                    debugPrint(str);
+                 
+                    str = "Hand = " + rankCardHands[0].hand.description + "\n"
+                    printMessage(str);
+                    debugPrint(str);       
+                    
+                    // Show winner's hidden tiles
+                    hand.sortSuitHidden();
+                    this.table.players[this.gameResult.winner].showHand(true);
+                    
                 } else {
-                    printMessage("Game over - Invalid Mahjong by player " + this.gameResult.winner + "\n");
-                    printInfo("Game over - Invalid Mahjong by player " + this.gameResult.winner);
+                    const str = "Game over - Invalid Mahjong by player " + this.gameResult.winner
+                    printMessage(str + "\n");
+                    printInfo(str);
+                    debugPrint(str + "\n");
                 }
             } else {
-                printMessage("Game over - Wall game\n");
-                printInfo("Game over - Wall game");
+                const str = "Game over - Wall game"
+                printMessage(str + "\n");
+                printInfo(str);
+                debugPrint(str + "\n")
             }
-
+            printMessage("===============================\n");
             button1.style.display = "none";  
             button2.style.display = "none";  
             button3.style.display = "none";  

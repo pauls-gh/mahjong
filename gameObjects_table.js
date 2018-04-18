@@ -421,7 +421,7 @@ export class Table {
                     for (const tile of tileset.tileArray) {
                         if (tile.suit === SUIT.JOKER) {
                             const text = swapTile.getText();
-                            printMessage("Player " + currPlayer + " exchanged " + text + " for joker\n");
+                            printMessage("Player " + currPlayer + " *exchanged* " + text + " for joker\n");
 
                             // Exchange swapTile
                             hand.removeHidden(swapTile);
