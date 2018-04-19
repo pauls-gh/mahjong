@@ -1,5 +1,5 @@
 import {game, printMessage, printInfo, debugPrint, debugTrace} from "./game.js";
-import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND} from "./constants.js";
+import {STATE, PLAYER_OPTION, PLAYER, SUIT, DRAGON, WIND, VNUMBER} from "./constants.js";
 import {GameAI} from "./gameAI.js";
 import {Card} from "./card/card.js";
 import {Tile} from "./gameObjects.js";
@@ -25,6 +25,7 @@ export class GameLogic {
         this.button4Function = null;
         this.sort1Function = null;
         this.sort2Function = null;
+        this.hintFunction = null;
         this.startButtonFunction = null;
         this.wallText = null;
         this.errorText = null;
@@ -750,7 +751,10 @@ export class GameLogic {
         const startButton = window.document.getElementById("start");
         const sort1 = window.document.getElementById("sort1");
         const sort2 = window.document.getElementById("sort2");
-
+        const hint = window.document.getElementById("hint");
+        const handSelect = window.document.getElementById("handSelect");
+        const numTileSelect = window.document.getElementById("numTileSelect");
+        
         switch (this.state) {
             case STATE.INIT:
             printMessage("American Mahjong v0.1\n");
@@ -759,7 +763,28 @@ export class GameLogic {
             printMessage("Press Start Game button\n");
             sort1.style.display = "none";
             sort2.style.display = "none";
-            window.document.getElementById("controldiv").style.visibility = "";            
+            hint.style.display = "none";
+            window.document.getElementById("controldiv").style.visibility = "";     
+            
+            // Populate hand select
+            for (const group of this.card.validHandGroups) {
+                const optionGroup = window.document.createElement("optgroup");
+                optionGroup.label = group.groupDescription;
+                handSelect.add(optionGroup);                    
+            
+                for (const validHand of group.hands) {
+                    const option = window.document.createElement("option");
+                    option.text = validHand.description;
+                    handSelect.add(option);                    
+                }
+            }
+
+            // Populate number of tiles select
+            for (let i = 1; i <= 14; i++) {
+                const option = window.document.createElement("option");
+                option.text = i;
+                numTileSelect.add(option);                
+            }
             break;
 
             case STATE.START:
@@ -767,6 +792,7 @@ export class GameLogic {
             startButton.disabled = true;
             sort1.style.display = "";
             sort2.style.display = "";
+            hint.style.display = "";
             this.disableSortButtons();
             button1.style.display = "none";
             button2.style.display = "none";
@@ -962,9 +988,11 @@ export class GameLogic {
     enableSortButtons() {
         const sort1 = window.document.getElementById("sort1");
         const sort2 = window.document.getElementById("sort2");
+        const hint = window.document.getElementById("hint");
 
         sort1.disable = false;
         sort2.disable = false;
+        hint.disable = false;
 
         if (this.sort1Function) {
             sort1.removeEventListener("click", this.sort1Function);
@@ -974,7 +1002,12 @@ export class GameLogic {
         if (this.sort2Function) {
             sort2.removeEventListener("click", this.sort2Function);
             this.sort2Function = null;
-        }      
+        }    
+        
+        if (this.hintFunction) {
+            hint.removeEventListener("click", this.hintFunction);
+            this.hintFunction = null;
+        }        
 
         this.sort1Function = function () {
             this.table.players[PLAYER.BOTTOM].hand.sortSuitHidden();
@@ -986,16 +1019,51 @@ export class GameLogic {
             this.table.players[PLAYER.BOTTOM].showHand();
         }.bind(this);        
         
+        this.hintFunction = function () {
+            // Make a copy of player 0 hand.  Pad to 14 tiles if necessary.
+            const hand = this.table.players[PLAYER.BOTTOM].hand.dupHand();
+            if (hand.getLength() === 13) {
+                const invalidTile = new Tile(SUIT.INVALID, VNUMBER.INVALID);
+                hand.insertHidden(invalidTile);            
+            }
+            const rankCardHands = this.card.rankHandArray14(hand);
+            this.card.sortHandRankArray(rankCardHands);
+
+            printMessage("==================================\n");
+            printMessage("Top 3 hands for player 0\n");
+            
+            for (let i = 0; i < 3; i++) {
+                const rankInfo = rankCardHands[i];
+                printMessage((i + 1) + ". " + rankInfo.hand.description + "\n");
+                //printMessage("   Group " + rankInfo.group.groupDescription + "\n");
+                //printMessage("   Rank  = " + Math.round(rankInfo.rank) + "/100\n");
+                
+            }            
+            printMessage("\nTop 3 tiles to discard\n");
+
+            const tileRankArray = this.gameAI.rankTiles14(hand);
+            for (let i = 0; i < 3; i++) {
+                const rankInfo = tileRankArray[i];
+                printMessage((i + 1) + ". " + rankInfo.tile.getText() + "\n");
+            }
+            printMessage("==================================\n");
+            
+
+        }.bind(this); 
+
         sort1.addEventListener("click", this.sort1Function);
         sort2.addEventListener("click", this.sort2Function);
+        hint.addEventListener("click", this.hintFunction);
     }
 
     disableSortButtons() {
         const sort1 = window.document.getElementById("sort1");
         const sort2 = window.document.getElementById("sort2");
-
+        const hint = window.document.getElementById("hint");
+        
         sort1.disable = true;
-        sort2.disable = true;        
+        sort2.disable = true;   
+        hint.disable = true;     
 
         if (this.sort1Function) {
             sort1.removeEventListener("click", this.sort1Function);
@@ -1005,7 +1073,13 @@ export class GameLogic {
         if (this.sort2Function) {
             sort2.removeEventListener("click", this.sort2Function);
             this.sort2Function = null;
-        }         
+        }     
+        
+        if (this.hintFunction) {
+            hint.removeEventListener("click", this.hintFunction);
+            this.hintFunction = null;
+        }          
+        
     } 
 
     displayErrorText(str) {

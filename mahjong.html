@@ -22,8 +22,41 @@
         <button id="start" class="button">Start Game</button>
         <button id="sort1" class="button">Sort by suit</button>
         <button id="sort2" class="button">Sort by rank</button>
+        <button id="hint" class="button">Hint</button>
+    </div>  
+    
+    <div id="traindiv">
+        <div>
+                <input id="trainCheckbox" type="checkbox">
+                <label for="trainCheckbox">Training Mode</label>  
+        </div>
+    </div>  
+
+    <div id="traindiv2">
+        <div class = "traindiv2class">Select a Starting Hand</div>        
+        <div class = "traindiv2class">
+                <select  id="handSelect"></select>   
+        </div>
+        <div class = "traindiv2class">
+                <select id="numTileSelect"></select> Number of Tiles             
+        </div>
+        <div class = "traindiv2class">
+                <input id="skipCharlestonCheckbox" type="checkbox">
+                <label for="skipCharlestonCheckbox">Skip Charleston?</label>  
+        </div>        
     </div>    
+    
     <style type="text/css">
+        .button {
+            background-color: #FFFFFF;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .button:disabled {
+            opacity: 0.65; 
+            cursor: not-allowed;
+        }
+
         #buttondiv {
             width: 500px;
             height: 50px;
@@ -39,30 +72,51 @@
             left: 400px;
             resize: none;
         }
-        .button {
-            background-color: #FFFFFF;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .button:disabled {
-            opacity: 0.65; 
-            cursor: not-allowed;
-        }
+        
         #messages {
             width: 300px;
-            height: 448px;
+            height: 348px;
             position: absolute;
             top: 0;
             left: 1052px;
             resize: none;
         }
-        #controldiv {
+
+        #traindiv {
             width: 300px;
-            height: 100px;
+            height: 20px;
             position: absolute;
-            top: 460px;
+            top: 360px;
+            left: 1052px;
+        } 
+
+        #traindiv2 {
+            border: 1px solid;
+            border-radius: 4px;
+            padding: 10px;
+            width: 290px;
+            height: 150px;
+            position: absolute;
+            top: 380px;
             left: 1052px;
         }        
+
+        .traindiv2class {
+            padding: 3px;
+        }
+
+        #controldiv {
+            width: 400px;
+            height: 20px;
+            position: absolute;
+            top: 570px;
+            left: 1052px;
+        }     
+
+        #handSelect {
+            width: 280px;
+        }           
+                      
     </style>
     
 </head>
