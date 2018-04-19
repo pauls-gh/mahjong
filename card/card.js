@@ -52,7 +52,7 @@ export class Card {
         outerLoop:
         for (const group of this.validHandGroups) {
             for (const validHand of group.hands) {
-                if (validHand.description === handDescription) {
+                if (validHand.description.valueOf() === handDescription.valueOf()) {
                     foundHand = validHand;
                     break outerLoop;
                 }
@@ -231,7 +231,7 @@ export class Card {
             [SUIT.CHAR, SUIT.BAM, SUIT.DOT],
             [SUIT.CHAR, SUIT.DOT, SUIT.BAM],
             [SUIT.BAM, SUIT.CHAR, SUIT.DOT],
-            [SUIT.BAM, SUIT.DOT], SUIT.CHAR,
+            [SUIT.BAM, SUIT.DOT, SUIT.CHAR],
             [SUIT.DOT, SUIT.CHAR, SUIT.BAM],
             [SUIT.DOT, SUIT.BAM, SUIT.CHAR]
         ];

@@ -533,7 +533,7 @@ export class CardTest2017 {
 
         {
 
-            // 11 NNN 11 SSS 1111  (3 suits, any like odds)
+            // 11 NNN 11 SSS 1111 (3 suits, any like odds)
             const hand = new Hand(false);
 
             hand.insertHidden(new Tile(SUIT.WIND, WIND.NORTH));
@@ -552,7 +552,7 @@ export class CardTest2017 {
             hand.insertHidden(new Tile(SUIT.BAM, 3));
             const singleTile = new Tile(SUIT.BAM, 3);
 
-            debugPrint("11 NNN 11 SSS 1111  (3 suits, any like odds) \n");
+            debugPrint("11 NNN 11 SSS 1111 (3 suits, any like odds) \n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
             this.card.printValidationInfo(validationInfo);
@@ -666,7 +666,7 @@ export class CardTest2017 {
             hand.insertHidden(new Tile(SUIT.DRAGON, DRAGON.GREEN));
             const singleTile = new Tile(SUIT.DRAGON, DRAGON.GREEN);
 
-            debugPrint("FF 2017 DD 2017 DD  (bams and craks only)\n");
+            debugPrint("FF 2017 DD 2017 DD (bams and craks only)\n");
 
             const validationInfo = this.card.validateHand13(hand, singleTile);
             this.card.printValidationInfo(validationInfo);

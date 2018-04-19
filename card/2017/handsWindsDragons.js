@@ -37,7 +37,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "NNNN DD DD DD SSSS  (3 suits)",
+            description: "NNNN DD DD DD SSSS (3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -71,7 +71,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "EEEE DD DD DD WWWW  (3 suits)",
+            description: "EEEE DD DD DD WWWW (3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -105,7 +105,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "11 NNN 11 SSS 1111  (3 suits, any like odds)",
+            description: "11 NNN 11 SSS 1111 (3 suits, any like odds)",
             vsuitCount: 3,
             concealed: true,
             odd: true,
@@ -139,7 +139,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "22 EEE 22 WWW 2222  (3 suits, any like evens)",
+            description: "22 EEE 22 WWW 2222 (3 suits, any like evens)",
             vsuitCount: 3,
             concealed: true,
             odd: false,
@@ -231,7 +231,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "FF DDDD DDDD DDDD  (3 suits)",
+            description: "FF DDDD DDDD DDDD (3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,

@@ -98,10 +98,11 @@ export class GameLogic {
         // Create hand for debugging / testing
         const initPlayerHandArray = [null, null, null, null];
 
+        const trainInfo = this.getTrainingInfo();
 
-        if (1) {
+        if (trainInfo.trainCheckbox) {
             // Player 0  (14 tiles)
-            initPlayerHandArray[0] = this.card.generateHand("222 444 6666 8888 (2 suit)", 14);;
+            initPlayerHandArray[0] = this.card.generateHand(trainInfo.handDescription, trainInfo.numTiles);;
 
             //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
             //hand.insertHidden(new Tile(SUIT.JOKER, 0));            
@@ -121,7 +122,7 @@ export class GameLogic {
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
         
         // debugging - skip charleston
-        if (1) {
+        if (trainInfo.trainCheckbox && trainInfo.skipCharlestonCheckbox) {
             this.loop();
         } else {
             this.charleston();
@@ -754,7 +755,8 @@ export class GameLogic {
         const hint = window.document.getElementById("hint");
         const handSelect = window.document.getElementById("handSelect");
         const numTileSelect = window.document.getElementById("numTileSelect");
-        
+        const skipCharlestonCheckbox = window.document.getElementById("skipCharlestonCheckbox");
+
         switch (this.state) {
             case STATE.INIT:
             printMessage("American Mahjong v0.1\n");
@@ -765,7 +767,7 @@ export class GameLogic {
             sort2.style.display = "none";
             hint.style.display = "none";
             window.document.getElementById("controldiv").style.visibility = "";     
-            
+
             // Populate hand select
             for (const group of this.card.validHandGroups) {
                 const optionGroup = window.document.createElement("optgroup");
@@ -785,6 +787,15 @@ export class GameLogic {
                 option.text = i;
                 numTileSelect.add(option);                
             }
+            // 9 tiles default
+            numTileSelect.selectedIndex = 8;
+            skipCharlestonCheckbox.checked = true;
+
+            const traincheckbox = window.document.getElementById("trainCheckbox");
+            traincheckbox.addEventListener("change", () => {
+                this.updateTrainingForm();
+            });   
+            this.updateTrainingForm();
             break;
 
             case STATE.START:
@@ -800,6 +811,7 @@ export class GameLogic {
             button4.style.display = "none";            
             window.document.getElementById("buttondiv").style.visibility = "";
             window.document.getElementById("info").style.visibility = "";
+            this.disableTrainingForm();
             this.wallText.visible = true;
             break;   
 
@@ -973,6 +985,8 @@ export class GameLogic {
             this.disableSortButtons();
             sort1.style.display = "none";
             sort2.style.display = "none";
+            hint.style.display = "none";
+            this.enableTrainingForm();        
 
             startButton.disabled = false;
 
@@ -1081,6 +1095,50 @@ export class GameLogic {
         }          
         
     } 
+
+
+    getTrainingInfo() {
+        const traincheckbox = window.document.getElementById("trainCheckbox");
+        const handSelect = window.document.getElementById("handSelect");
+        const numTileSelect = window.document.getElementById("numTileSelect");
+        const skipCharlestonCheckbox = window.document.getElementById("skipCharlestonCheckbox");
+
+        let trainInfo = {
+            trainCheckbox: false,
+            handDescription: "",
+            numTiles: 0,
+            skipCharlestonCheckbox: false
+        };
+
+        trainInfo.trainCheckbox = traincheckbox.checked;
+        trainInfo.handDescription = handSelect.value;
+        trainInfo.numTiles = parseInt(numTileSelect.value);
+        trainInfo.skipCharlestonCheckbox = skipCharlestonCheckbox.checked;
+
+        return trainInfo;
+    }
+
+    updateTrainingForm() {
+        const trainfieldset2 = window.document.getElementById("trainfieldset2");
+        const trainInfo = this.getTrainingInfo();
+
+        trainfieldset2.disabled = !trainInfo.trainCheckbox;
+    }
+
+    enableTrainingForm() {
+        const trainfieldset1 = window.document.getElementById("trainfieldset1");
+        const trainfieldset2 = window.document.getElementById("trainfieldset2");
+        
+        trainfieldset1.disabled = false;
+        this.updateTrainingForm();
+    }
+
+    disableTrainingForm() {
+        const trainfieldset1 = window.document.getElementById("trainfieldset1");
+        const trainfieldset2 = window.document.getElementById("trainfieldset2");
+        trainfieldset1.disabled = true;
+        trainfieldset2.disabled = true;
+    }
 
     displayErrorText(str) {
         // Don't repeat error messages

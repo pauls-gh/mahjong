@@ -8,7 +8,7 @@ export const hands2018 = {
     groupDescription: "2018",
     hands: [
         {
-            description: "222 0000 111 8888  (any 3 suits)",
+            description: "222 0000 111 8888 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,

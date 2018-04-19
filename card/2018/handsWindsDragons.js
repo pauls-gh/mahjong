@@ -95,7 +95,7 @@ export const handsWindsDragons = {
             ]
         },
         {
-            description: "FF DDDD NEWS DDDD  (2 suits)",
+            description: "FF DDDD NEWS DDDD (2 suits)",
             vsuitCount: 2,
             concealed: false,
             odd: false,

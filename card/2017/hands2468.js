@@ -8,7 +8,7 @@ export const hands2468 = {
     groupDescription: "2468",
     hands: [
         {
-            description: "FFFF 2 44 666 8888  (1 suit)",
+            description: "FFFF 2 44 666 8888 (1 suit)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -135,7 +135,7 @@ export const hands2468 = {
             ]
         },
         {
-            description: "22 44 666 888 DDDD  (3 suits)",
+            description: "22 44 666 888 DDDD (3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -169,7 +169,7 @@ export const hands2468 = {
             ]
         },
         {
-            description: "FF 222 444 666 888  (1 suit)",
+            description: "FF 222 444 666 888 (1 suit)",
             vsuitCount: 1,
             concealed: true,
             odd: false,

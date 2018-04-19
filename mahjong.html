@@ -25,26 +25,33 @@
         <button id="hint" class="button">Hint</button>
     </div>  
     
-    <div id="traindiv">
-        <div>
-                <input id="trainCheckbox" type="checkbox">
-                <label for="trainCheckbox">Training Mode</label>  
-        </div>
-    </div>  
 
-    <div id="traindiv2">
-        <div class = "traindiv2class">Select a Starting Hand</div>        
-        <div class = "traindiv2class">
+    <form id="trainform1">
+        <fieldset id="trainfieldset1">    
+            <div>
+                <div>
+                    <input id="trainCheckbox" type="checkbox">
+                    <label for="trainCheckbox">Training Mode</label>  
+                </div>
+            </div>  
+        </fieldset>             
+    </form>    
+    
+    <form id="trainform2">
+    <fieldset id="trainfieldset2">
+        <div class = "trainclass">Select a Starting Hand</div>        
+        <div class = "trainclass">
                 <select  id="handSelect"></select>   
         </div>
-        <div class = "traindiv2class">
+        <div class = "trainclass">
                 <select id="numTileSelect"></select> Number of Tiles             
         </div>
-        <div class = "traindiv2class">
+        <div class = "trainclass">
                 <input id="skipCharlestonCheckbox" type="checkbox">
                 <label for="skipCharlestonCheckbox">Skip Charleston?</label>  
-        </div>        
-    </div>    
+        </div>   
+    </fieldset>             
+    </form>    
     
     <style type="text/css">
         .button {
@@ -56,7 +63,6 @@
             opacity: 0.65; 
             cursor: not-allowed;
         }
-
         #buttondiv {
             width: 500px;
             height: 50px;
@@ -72,7 +78,6 @@
             left: 400px;
             resize: none;
         }
-        
         #messages {
             width: 300px;
             height: 348px;
@@ -81,30 +86,6 @@
             left: 1052px;
             resize: none;
         }
-
-        #traindiv {
-            width: 300px;
-            height: 20px;
-            position: absolute;
-            top: 360px;
-            left: 1052px;
-        } 
-
-        #traindiv2 {
-            border: 1px solid;
-            border-radius: 4px;
-            padding: 10px;
-            width: 290px;
-            height: 150px;
-            position: absolute;
-            top: 380px;
-            left: 1052px;
-        }        
-
-        .traindiv2class {
-            padding: 3px;
-        }
-
         #controldiv {
             width: 400px;
             height: 20px;
@@ -112,11 +93,42 @@
             top: 570px;
             left: 1052px;
         }     
-
+        #trainform1 {
+            width: 300px;
+            height: 20px;
+            position: absolute;
+            top: 360px;
+            left: 1052px;
+        }          
+        #trainform2 {
+            width: 290px;
+            height: 150px;
+            position: absolute;
+            top: 400px;
+            left: 1052px;
+        }        
+        #trainfieldset1 {
+            border: none;
+        }
+        .trainclass {
+            padding: 3px;
+        }        
         #handSelect {
             width: 280px;
-        }           
-                      
+        }          
+        #trainfieldset1:disabled {
+            opacity: 0.35; 
+            cursor: not-allowed;
+        } 
+        #trainfieldset2:disabled {
+            opacity: 0.35; 
+            cursor: not-allowed;
+        }  
+        #trainCheckbox:disabled {
+            opacity: 0.35; 
+            cursor: not-allowed;
+        }
+                   
     </style>
     
 </head>

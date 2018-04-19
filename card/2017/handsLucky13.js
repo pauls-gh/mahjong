@@ -8,7 +8,7 @@ export const handsLucky13 = {
     groupDescription: "Lucky13",
     hands: [
         {
-            description: "FFFF 4444 9999 13  (any 1 suits)",
+            description: "FFFF 4444 9999 13 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -42,7 +42,7 @@ export const handsLucky13 = {
             ]
         },
         {
-            description: "FFFF 4444 9999 13  (any 3 suits)",
+            description: "FFFF 4444 9999 13 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -77,7 +77,7 @@ export const handsLucky13 = {
         },
 
         {
-            description: "FFFF 5555 8888 13  (any 1 suits)",
+            description: "FFFF 5555 8888 13 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -111,7 +111,7 @@ export const handsLucky13 = {
             ]
         },
         {
-            description: "FFFF 5555 8888 13  (any 3 suits)",
+            description: "FFFF 5555 8888 13 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -145,7 +145,7 @@ export const handsLucky13 = {
             ]
         },
         {
-            description: "FFFF 6666 7777 13  (any 1 suits)",
+            description: "FFFF 6666 7777 13 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -179,7 +179,7 @@ export const handsLucky13 = {
             ]
         },
         {
-            description: "FFFF 6666 7777 13  (any 3 suits)",
+            description: "FFFF 6666 7777 13 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,

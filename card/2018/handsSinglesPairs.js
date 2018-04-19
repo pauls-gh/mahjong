@@ -411,7 +411,7 @@ export const handsSinglesPairs = {
             ]
         },
         {
-            description: "FF 2018 DD 2018 DD  (bams and craks only, concealed)",
+            description: "FF 2018 DD 2018 DD (bams and craks only, concealed)",
             vsuitCount: 0,
             concealed: true,
             odd: false,

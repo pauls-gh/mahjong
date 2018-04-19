@@ -8,7 +8,7 @@ export const handsAdditionHands = {
     groupDescription: "Addition Hands",
     hands: [
         {
-            description: "FFFF 3333 9999 12  (any 1 suits)",
+            description: "FFFF 3333 9999 12 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -42,7 +42,7 @@ export const handsAdditionHands = {
             ]
         },
         {
-            description: "FFFF 3333 9999 12  (any 3 suits)",
+            description: "FFFF 3333 9999 12 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -77,7 +77,7 @@ export const handsAdditionHands = {
         },
 
         {
-            description: "FFFF 4444 8888 12  (any 1 suits)",
+            description: "FFFF 4444 8888 12 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -111,7 +111,7 @@ export const handsAdditionHands = {
             ]
         },
         {
-            description: "FFFF 4444 8888 12  (any 3 suits)",
+            description: "FFFF 4444 8888 12 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
@@ -145,7 +145,7 @@ export const handsAdditionHands = {
             ]
         },
         {
-            description: "FFFF 5555 7777 12  (any 1 suits)",
+            description: "FFFF 5555 7777 12 (any 1 suits)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -179,7 +179,7 @@ export const handsAdditionHands = {
             ]
         },
         {
-            description: "FFFF 5555 7777 12  (any 3 suits)",
+            description: "FFFF 5555 7777 12 (any 3 suits)",
             vsuitCount: 3,
             concealed: false,
             odd: false,
