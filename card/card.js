@@ -89,13 +89,13 @@ export class Card {
                 } else if (suit >= SUIT.VSUIT1) {
                     // VSUIT
                     suit = vsuitArray[suit - SUIT.VSUIT1];
-    
+
                     //  VNUMBER
                     if (number > 9) {
                         number = minNum + number - VNUMBER.CONSECUTIVE1;
                     }
                 }
-    
+
                 hand.insertHidden(new Tile(suit, number));
             }
             tileCounts[compIndex]++;

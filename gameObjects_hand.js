@@ -294,7 +294,7 @@ export class Hand {
 
     getSeperatorDistance(playerInfo) {
         let seperatorDistance = 0;
-        const separatorScale = 0.1;
+        const separatorScale = 0.2;
 
         // Separate hidden and exposed tiles
         switch (playerInfo.id) {

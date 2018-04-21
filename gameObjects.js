@@ -268,7 +268,7 @@ export class Discards {
         let offsetX = 200;
         let offsetY = 200;
         for (const tile of this.tileArray) {
-            const DISCARD_SCALE = 0.5;
+            const DISCARD_SCALE = 0.6;
             tile.x = offsetX;
             tile.y = offsetY;
             tile.angle = 0;
