@@ -34,7 +34,7 @@ export class Card {
                         console.log("ERROR - generateHand produced invalid hand\n");
                     }
                 }
-            }  
+            }
         }
     }
 
@@ -42,7 +42,6 @@ export class Card {
         const vsuitArray = [SUIT.CHAR, SUIT.BAM, SUIT.DOT];
         const hand = new Hand(false);
         let foundHand = null;
-        let insertCount = 0;
 
         if (!numTiles) {
             numTiles = 14;
@@ -63,35 +62,60 @@ export class Card {
             return hand;
         }
 
-        outerLoop2:
-        for (const comp of foundHand.components) {
+        // Distribute tiles round-robin amongst components
+        const tileCounts = [];
+        for (let i = 0; i < foundHand.components.length; i++) {
+            tileCounts.push(0);
+        }
+
+        let compIndex = 0;
+        for (let i = 0; i < numTiles; i++) {
+            const comp = foundHand.components[compIndex];
             let suit = comp.suit;
             let number = comp.number;
 
-            let minNum = 1;
-            if (hand.even) {
-                minNum = 2;
-            }
-            // Translate virtual suit to real suit using vsuitArray
-            if (suit >= SUIT.VSUIT1_DRAGON) {
-                number = vsuitArray[suit - SUIT.VSUIT1_DRAGON];
-                suit = SUIT.DRAGON;
-            } else if (suit >= SUIT.VSUIT1) {
-                // VSUIT
-                suit = vsuitArray[suit - SUIT.VSUIT1];
-
-                //  VNUMBER
-                if (number > 9) {
-                    number = minNum + number - VNUMBER.CONSECUTIVE1;
+            if (tileCounts[compIndex] >= 4) {
+                // Quint - use joker
+                hand.insertHidden(new Tile(SUIT.JOKER, 0));
+            } else {
+                let minNum = 1;
+                if (hand.even) {
+                    minNum = 2;
                 }
-            }
-
-            for (let i = 0; i < comp.count; i++) {
+                // Translate virtual suit to real suit using vsuitArray
+                if (suit >= SUIT.VSUIT1_DRAGON) {
+                    number = vsuitArray[suit - SUIT.VSUIT1_DRAGON];
+                    suit = SUIT.DRAGON;
+                } else if (suit >= SUIT.VSUIT1) {
+                    // VSUIT
+                    suit = vsuitArray[suit - SUIT.VSUIT1];
+    
+                    //  VNUMBER
+                    if (number > 9) {
+                        number = minNum + number - VNUMBER.CONSECUTIVE1;
+                    }
+                }
+    
                 hand.insertHidden(new Tile(suit, number));
-                insertCount++;
-                if (insertCount === numTiles) {
-                    break outerLoop2;
+            }
+            tileCounts[compIndex]++;
+
+            // Find next comp index
+            let found = false;
+            for (let j = 0; j < foundHand.components.length; j++) {
+                compIndex++;
+                if (compIndex >= foundHand.components.length) {
+                    compIndex = 0;
                 }
+
+                if (tileCounts[compIndex] < foundHand.components[compIndex].count) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                break;
             }
         }
 

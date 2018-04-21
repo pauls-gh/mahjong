@@ -8,7 +8,7 @@ export const handsQuints = {
     groupDescription: "Quints",
     hands: [
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "NNNNN DDDD 11111 (any # any suit, red dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -32,7 +32,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "NNNNN DDDD 11111 (any # any suit, green dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -56,7 +56,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "NNNNN DDDD 11111 (any # any suit, white dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -80,7 +80,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "SSSSS DDDD 11111 (any # any suit, red dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -104,7 +104,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "SSSSS DDDD 11111 (any wind, any # any suit, green dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -128,7 +128,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "SSSSS DDDD 11111 (any # any suit, white dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -152,7 +152,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "WWWWW DDDD 11111 (any # any suit, red dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -176,7 +176,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "WWWWW DDDD 11111 (any # any suit, green dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -200,7 +200,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "WWWWW DDDD 11111 (any # any suit, white dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -224,7 +224,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "EEEEE DDDD 11111 (any # any suit, red dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -248,7 +248,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "EEEEE DDDD 11111 (any # any suit, green dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
@@ -272,7 +272,7 @@ export const handsQuints = {
             ]
         },
         {
-            description: "NNNNN DDDD 11111 (any wind, any # any suit, kong any dragon)",
+            description: "EEEEE DDDD 11111 (any # any suit, white dragon)",
             vsuitCount: 1,
             concealed: false,
             odd: false,
