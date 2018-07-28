@@ -9,7 +9,7 @@ export let gGameLogic = null;
 
 // INIT
 function init() {
-    game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, "",
+    game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, "gamediv",
         {
             preload,
             create,
@@ -24,6 +24,15 @@ init();
 function preload() {
     game.load.atlasJSONHash("tiles", "assets/tiles.png", "assets/tiles.json");
     game.load.image("back", "assets/back.png");
+
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.scale.setResizeCallback(resizeCallback, null);
+}
+
+function resizeCallback() {
+
 }
 
 function create() {
