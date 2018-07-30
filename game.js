@@ -33,7 +33,11 @@ function preload() {
 }
 
 function resizeCallback() {
-
+    let s = document.getElementById("uicenterdiv");
+    let left = 400 * game.scale.scaleFactorInversed .x;
+    let top = 450  * game.scale.scaleFactorInversed .y;
+    uicenterdiv.style.left = left + "px";
+    uicenterdiv.style.top = top + "px";
 }
 
 function create() {
