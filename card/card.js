@@ -2,10 +2,10 @@ import {debugPrint, debugTrace, gdebug} from "../game.js";
 import {Tile} from "../gameObjects.js";
 import {Hand} from "../gameObjects_hand.js";
 import {SUIT, DRAGON, WIND, VNUMBER} from "../constants.js";
-import {CardTest2017} from "./2017/card_test.js";
-import {CardTest2018} from "./2018/card_test.js";
-import {validHandGroups2017} from "./2017/card2017.js"
-import {validHandGroups2018} from "./2018/card2018.js"
+import {CardTest2017} from "../card/2017/card_test.js";
+import {CardTest2018} from "../card/2018/card_test.js";
+import {validHandGroups2017} from "../card/2017/card2017.js"
+import {validHandGroups2018} from "../card/2018/card2018.js"
 
 // PRIVATE CONSTANTS
 

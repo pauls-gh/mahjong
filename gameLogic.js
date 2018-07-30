@@ -7,10 +7,7 @@ import {Hand, TileSet} from "./gameObjects_hand.js";
 
 // PRIVATE CONSTANTS
 
-
 // PRIVATE GLOBALS
-// TBD
-
 
 export class GameLogic {
     constructor(table) {
@@ -767,7 +764,7 @@ export class GameLogic {
             printMessage("- Google Chrome \n");
             printMessage("- Firefox\n");
             printMessage("- Microsoft Edge\n\n");
-            printMessage("American Mahjong v0.1\n");
+            printMessage("American Mahjong v0.91\n");
             printMessage("Using " + this.card.year + " Mahjong card\n\n");            
             printMessage("Press Start Game button\n");
             sort1.style.display = "none";

@@ -25,6 +25,7 @@ function preload() {
     game.load.atlasJSONHash("tiles", "assets/tiles.png", "assets/tiles.json");
     game.load.image("back", "assets/back.png");
 
+    // Scale game canvas
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
