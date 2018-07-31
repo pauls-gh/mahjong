@@ -262,7 +262,8 @@ export class GameLogic {
             if (discardTile.suit === SUIT.JOKER) {
                 // Joker discarded - add to discard pile
                 this.table.discards.insertDiscard(discardTile);
-                this.table.discards.showDiscards();
+                let {offsetX, offsetY} = this.table.wall.showWall();
+                this.table.discards.showDiscards(offsetX, offsetY);
 
                 //  Move to next player
                 this.currPlayer++;
@@ -275,9 +276,10 @@ export class GameLogic {
             // CLAIM DISCARD? (for exposure/mahjong).            
 
             // Show tile
-            discardTile.x = 350;
-            discardTile.y = 475;
-            discardTile.angle = 0;
+            //discardTile.x = 350;
+            //discardTile.y = 475;
+            //discardTile.angle = 0;
+            discardTile.animate(350, 475, 0);
             discardTile.scale = 1.0;
             discardTile.showTile(true, true);
 

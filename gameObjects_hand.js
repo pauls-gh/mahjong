@@ -143,9 +143,10 @@ export class TileSet {
         const tileWidth = this.getTileWidth(playerInfo);
 
         for (const tile of this.tileArray) {
-            tile.x = x;
-            tile.y = y;
-            tile.angle = playerInfo.angle;
+            //tile.x = x;
+            //tile.y = y;
+            //tile.angle = playerInfo.angle;
+            tile.animate(x, y, playerInfo.angle);
             if (playerInfo.id === PLAYER.BOTTOM) {
                 tile.scale = 1.0;
             } else {

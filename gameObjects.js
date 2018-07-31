@@ -85,6 +85,7 @@ export class Tile {
         this.origX = 0;
         this.origY = 0;
         this.selected = false;
+        this.tween = null;
     }
 
     create() {
@@ -130,6 +131,58 @@ export class Tile {
         this.spriteBack.scale.set(scale, scale);
     }
 
+    animate(x, y, angle) {
+        const speed = 750;
+        const distance = Math.hypot(x - this.sprite.x, y - this.sprite.y);
+        const time = (distance * 1000 / speed);
+
+        if (this.tween !== null) {
+            // Cancel previous tween
+            game.tweens.remove(this.tween);
+        }
+
+        this.tween = game.add.tween(this.sprite);
+        
+        if (this.sprite.angle === undefined) {
+            this.angle = 0;
+        }
+
+        if (Phaser.Math.wrapAngle(this.sprite.angle) === Phaser.Math.wrapAngle(angle)) {
+            this.angle = angle;
+            this.tween.to(
+                {
+                    x: x,
+                    y: y
+                }, time, Phaser.Easing.Linear.None);       
+        } else {
+            this.tween.to(
+                {
+                    x: x,
+                    y: y,
+                    angle: angle
+                }, time, Phaser.Easing.Linear.None);       
+        }
+
+        this.tween.onUpdateCallback(this.tweenUpdateCallback, this);
+        this.tween.onComplete.add( () => {
+            this.sprite.x = x;
+            this.sprite.y = y;
+            this.sprite.angle = angle;
+            this.spriteBack.x = x;
+            this.spriteBack.y = y;
+            this.spriteBack.angle = angle;
+        }, this);
+
+        this.tween.start();
+    }
+
+    // Called at game update time
+    tweenUpdateCallback() {
+        // Make sure tile back sprite is also updated
+        this.spriteBack.x = this.sprite.x;
+        this.spriteBack.y = this.sprite.y;
+        this.spriteBack.angle = this.sprite.angle;
+    }
 
     showTile(visible, faceUp) {
         this.sprite.visible = false;
@@ -252,6 +305,35 @@ export class Wall {
             array[j] = temp;
         }
     }
+
+    showWall() {
+        const DISCARD_SCALE = 0.6;
+
+        // Calculate positions for all discarded tiles
+        let offsetX = 200;
+        let offsetY = 200;
+        for (const tile of this.tileArray) {
+            //tile.x = offsetX;
+            //tile.y = offsetY;
+            //tile.angle = 0;
+            tile.animate(offsetX, offsetY, 0);
+            tile.scale = DISCARD_SCALE;
+            tile.showTile(true, false);
+
+            offsetX += SPRITE_WIDTH * DISCARD_SCALE;
+
+            if (offsetX > 800) {
+                offsetX = 200;
+                offsetY += SPRITE_HEIGHT * DISCARD_SCALE;
+            }
+        }
+
+        // Return position where discarded tiles should start
+        if (offsetX !== 200) {
+            offsetY += SPRITE_HEIGHT * DISCARD_SCALE;
+        }
+        return { offsetX:200, offsetY};
+    }    
 }
 
 export class Discards {
@@ -263,15 +345,14 @@ export class Discards {
         this.tileArray.push(tile);
     }
 
-    showDiscards() {
+    showDiscards(offsetX, offsetY) {
         // Calculate positions for all discarded tiles
-        let offsetX = 200;
-        let offsetY = 200;
         for (const tile of this.tileArray) {
             const DISCARD_SCALE = 0.6;
-            tile.x = offsetX;
-            tile.y = offsetY;
-            tile.angle = 0;
+            //tile.x = offsetX;
+            //tile.y = offsetY;
+            //tile.angle = 0;
+            tile.animate(offsetX, offsetY, 0);
             tile.scale = DISCARD_SCALE;
             tile.showTile(true, true);
 

@@ -119,6 +119,7 @@ export class Table {
     }
 
     deal(initPlayerHandArray) {
+
         // Shuffle tiles
         this.wall.shuffle();
 
@@ -176,6 +177,8 @@ export class Table {
             this.players[i].hand.sortSuitHidden();
             this.players[i].showHand();
         }
+
+        this.wall.showWall();
     }
 
     // Insert pass tile arrays into players hands.
@@ -267,7 +270,8 @@ export class Table {
         if (numDiscard === 4) {
             // If no-one wants the discard, add to discard pile
             this.discards.insertDiscard(discardTile);
-            this.discards.showDiscards();
+            let {offsetX, offsetY} = this.wall.showWall();
+            this.discards.showDiscards(offsetX, offsetY);
 
             return {
                 playerOption: PLAYER_OPTION.DISCARD_TILE,
