@@ -100,6 +100,9 @@ export class TileSet {
 
             return vala - valb;
         });
+
+        this.moveFlowerToFront();
+        this.moveJokerToFront();
     }
 
     sortSuit() {
@@ -109,6 +112,43 @@ export class TileSet {
 
             return vala - valb;
         });
+
+        this.moveFlowerToFront();
+        this.moveJokerToFront();
+    }
+
+    moveJokerToFront() {
+        let jokers = [];
+
+        for (const tile of this.tileArray) {
+            if (tile.suit == SUIT.JOKER) {
+                jokers.unshift(tile);
+            }
+        }
+
+        for (const tile of jokers) {
+            // Remove tile
+            this.tileArray.splice(this.tileArray.indexOf(tile), 1);
+            // Insert in front of array
+            this.tileArray.unshift(tile);
+        }
+    }
+
+    moveFlowerToFront() {
+        let flowers = [];
+
+        for (const tile of this.tileArray) {
+            if (tile.suit == SUIT.FLOWER) {
+                flowers.unshift(tile);
+            }
+        }
+
+        for (const tile of flowers) {
+            // Remove tile
+            this.tileArray.splice(this.tileArray.indexOf(tile), 1);
+            // Insert in front of array
+            this.tileArray.unshift(tile);
+        }
     }
 
     getTileWidth(playerInfo) {
