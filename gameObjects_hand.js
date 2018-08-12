@@ -230,8 +230,14 @@ export class TileSet {
 
         if (this.inputEnabled) {
             tile.selected = false;
-            tile.sprite.events.onInputDown.removeAll();
+            tile.sprite.events.onInputUp.removeAll();
             tile.sprite.inputEnabled = false;
+
+            tile.drag = false;
+            tile.sprite.input.disableDrag();
+            tile.sprite.events.onDragStart.removeAll();
+            tile.sprite.events.onDragUpdate.removeAll();
+            tile.sprite.events.onDragStop.removeAll();
         }
         const index = this.tileArray.indexOf(tile);
         if (index !== -1) {
@@ -240,6 +246,48 @@ export class TileSet {
 
         return tile;
     }
+
+    checkOverlap(tile) {
+        let overlappedTile = null;
+        let maxarea = 0;
+        let tileBounds = tile.sprite.getBounds();
+        let tileArea = (tileBounds.width * tileBounds.height);
+
+        for (const tempTile of this.tileArray) {
+            if (tile === tempTile) {
+                continue;
+            }
+            let intersectRect = Phaser.Rectangle.intersection(tileBounds, tempTile.sprite.getBounds());
+            let area = intersectRect.width * intersectRect.height;
+
+            if (area && (area > maxarea) && ((area / tileArea) > 0.7)) {
+                maxarea = area;
+                overlappedTile = tempTile;
+            }
+        }
+
+        return overlappedTile;
+    }
+
+    swapTiles(tile, overlappedTile) {
+        // Swap tile sprite positions
+        let tempx = tile.origX;
+        let tempy = tile.origY;
+
+        tile.origX = overlappedTile.x;
+        tile.origy =  overlappedTile.y;
+        overlappedTile.x = tempx;
+        overlappedTile.y = tempy;        
+
+        // Swap tile positions in the tile array
+        const tileIndex = this.tileArray.indexOf(tile);
+        const overlappedTileIndex = this.tileArray.indexOf(overlappedTile);
+
+        let temp = this.tileArray[tileIndex];
+        this.tileArray[tileIndex] = this.tileArray[overlappedTileIndex];
+        this.tileArray[overlappedTileIndex] = temp;
+    }
+
 }
 
 export class Hand {
@@ -455,9 +503,11 @@ export class Hand {
 
         if (tileSet.inputEnabled) {
             tile.sprite.inputEnabled = true;
-            tile.sprite.events.onInputDown.add(
+            tile.sprite.events.onInputUp.add(
                 (sprite) => {
-
+                    if (tile.drag) {
+                        return;
+                    }
                     let maxSelect = 3;
                     let minSelect = 3;
 
@@ -530,6 +580,32 @@ export class Hand {
                     }
                 }
             );
+
+            // Enable drag and drop
+            tile.sprite.input.enableDrag();
+            tile.sprite.input.dragDistanceThreshold  = 3;
+            tile.sprite.input.bringToTop = true;
+            tile.sprite.events.onDragStart.add((sprite, pointer, x, y) => {
+                tile.drag = true;
+                this.resetSelection();
+                tile.origX = tile.x;
+                tile.origY = tile.y;
+            });      
+            tile.sprite.events.onDragUpdate.add((sprite, pointer, x, y, point, fromStart) => {
+                // Check for tile overlap with all hidden tiles
+                const overlappedTile = tileSet.checkOverlap(tile);
+                if (overlappedTile) {
+                    tileSet.swapTiles(tile, overlappedTile);
+                } 
+            });                  
+            tile.sprite.events.onDragStop.add((sprite, pointer) => {
+                tile.drag = false;
+
+                // Reset original tile position
+                tile.x = tile.origX;
+                tile.y = tile.origY;
+            });
+
         }
 
         tileSet.insert(tile);
@@ -571,7 +647,7 @@ export class Hand {
         for (const tile of tileArray) {
             if (tile.suit === SUIT.JOKER) {
                 tile.sprite.inputEnabled = true;
-                tile.sprite.events.onInputDown.add(
+                tile.sprite.events.onInputUp.add(
                     (sprite) => {
                         let maxSelect = 1;
                         let minSelect = 1;
