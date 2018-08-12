@@ -135,11 +135,14 @@ export class Tile {
         const speed = 750;
         const distance = Math.hypot(x - this.sprite.x, y - this.sprite.y);
         const time = (distance * 1000 / speed);
-
+        
         if (this.tween !== null) {
             // Cancel previous tween
             game.tweens.remove(this.tween);
         }
+
+        this.sprite.bringToTop();
+        this.spriteBack.bringToTop();
 
         this.tween = game.add.tween(this.sprite);
         
