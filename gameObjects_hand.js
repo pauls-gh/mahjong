@@ -234,10 +234,12 @@ export class TileSet {
             tile.sprite.inputEnabled = false;
 
             tile.drag = false;
-            tile.sprite.input.disableDrag();
+            if (tile.sprite.input) {
+                tile.sprite.input.disableDrag();
+            }
             tile.sprite.events.onDragStart.removeAll();
             tile.sprite.events.onDragUpdate.removeAll();
-            tile.sprite.events.onDragStop.removeAll();
+            tile.sprite.events.onDragStop.removeAll();            
         }
         const index = this.tileArray.indexOf(tile);
         if (index !== -1) {
