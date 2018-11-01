@@ -147,7 +147,9 @@ export class Card {
         const info = {
             valid: false,
             tileCount: 0,
-            minNum: 9999,
+            numJokers: 0,
+            minNumLow: 9999,
+            minNumHigh: 9999,
             suits: [],
             allHidden
         };
@@ -161,18 +163,27 @@ export class Card {
             if (info.suits.indexOf(suit) === -1) {
                 info.suits.push(suit);
             }
+            if (suit === SUIT.JOKER) {
+                info.numJokers++;
+            }
         }
 
         // Determine tile with smallest number
-        let minNum = 9999;
+        info.minNumLow = 9999;
+        info.minNumHigh = 9999;
         for (const tile of test) {
             if (tile.suit === SUIT.CHAR || tile.suit === SUIT.BAM || tile.suit === SUIT.DOT) {
-                if (tile.number < minNum) {
-                    minNum = tile.number;
+                if (tile.number < info.minNumHigh) {
+                    info.minNumHigh = tile.number;
                 }
             }
         }
-        info.minNum = minNum;
+        // If >=3 jokers are present, then the minimum number could be in a range.  Test entire range.
+        if (info.numJokers >= 3) {
+            info.minNumLow = 1;
+        } else {
+            info.minNumLow = info.minNumHigh;
+        }
 
         // Validate number of tiles
         info.tileCount = test.length;
@@ -222,17 +233,6 @@ export class Card {
             return false;
         }
 
-        // Make sure odd/even hand has minNum set appropriately
-        if (info.minNum !== 9999) {
-            if (validHand.even && (info.minNum & 0x1)) {
-                return false;
-            }
-
-            if (validHand.odd && !(info.minNum & 0x1)) {
-                return false;
-            }
-        }
-
         // Generate permutations of VSUIT1, VSUIT2, VSUIT3
         const permVsuit0 = [[-1, -1, -1]];
 
@@ -277,14 +277,20 @@ export class Card {
             break;
         }
 
-        // Iterate over permutations of virtual suits
-        for (const vsuitArray of permArray) {
+        // Iterate over minNum range (may be an unknown range due to jokers)
+        for (let minNum = info.minNumLow; minNum <= info.minNumHigh; minNum++) {
+            debugTrace("minNum = " + minNum + "\n");
 
-            debugTrace("VsuitArray = " + vsuitArray + "\n");
+            // Iterate over permutations of virtual suits
+            for (const vsuitArray of permArray) {
+                debugTrace("VsuitArray = " + vsuitArray + "\n");
 
-            // Validate components of hand
-            match = this.matchComponents(test, info, validHand, vsuitArray);
-
+                // Validate components of hand
+                match = this.matchComponents(test, info, validHand, vsuitArray, minNum);
+                if (match) {
+                    break;
+                }
+            }
             if (match) {
                 break;
             }
@@ -293,8 +299,19 @@ export class Card {
         return match;
     }
 
-    matchComponents(test, info, validHand, vsuitArray) {
+    matchComponents(test, info, validHand, vsuitArray, minNum) {
         let match = true;
+
+        // Make sure odd/even hand has minNum set appropriately
+        if (minNum !== 9999) {
+            if (validHand.even && (minNum & 0x1)) {
+                return false;
+            }
+
+            if (validHand.odd && !(minNum & 0x1)) {
+                return false;
+            }
+        }
 
         // Make copy of test array
         const testCopy = [];
@@ -321,7 +338,7 @@ export class Card {
 
                 //  VNUMBER
                 if (compNum > 9) {
-                    compNum = info.minNum + compNum - VNUMBER.CONSECUTIVE1;
+                    compNum = minNum + compNum - VNUMBER.CONSECUTIVE1;
                 }
             }
             // Search testCopy for tiles that match components
@@ -381,7 +398,9 @@ export class Card {
         }
         debugPrint("valid = " + info.valid + "\n");
         debugPrint("tileCount = " + info.tileCount + "\n");
-        debugPrint("minNum = " + info.minNum + "\n");
+        debugPrint("numJokers = " + info.numJokers + "\n");
+        debugPrint("minNumLow = " + info.minNumLow + "\n");
+        debugPrint("minNumHigh = " + info.minNumHigh + "\n");
         let suitStr = "";
         for (const suit of info.suits) {
             suitStr += suit + ", ";

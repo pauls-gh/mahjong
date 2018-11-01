@@ -106,12 +106,33 @@ export class GameLogic {
         } 
 
         if (0) {
-            // Player 1  (13 tiles)
-            initPlayerHandArray[1] = this.card.generateHand("FFF 1111 FFF 1111 (any 2 suits)", 9);
-            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
-            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
-            initPlayerHandArray[1].insertHidden(new Tile(SUIT.BAM, 1));            
-            
+            // Player 0  (14 tiles)
+            //initPlayerHandArray[0] = this.card.generateHand("111 222 3333 4444 (2 suits, 4 consecutive numbers)", 14);
+
+            initPlayerHandArray[0] = new Hand(false);
+
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.DOT, 4));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.DOT, 4));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.DOT, 4));   
+
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 5));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 5));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 5));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 5));   
+
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 6));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 6));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 6));   
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.BAM, 6));   
+
+            // Create new "exposed" TileSet
+            initPlayerHandArray[0].exposedTileSetArray = [];
+            const tileSet = new TileSet(false);
+            tileSet.insert(new Tile(SUIT.JOKER, 0));
+            tileSet.insert(new Tile(SUIT.JOKER, 0));
+            tileSet.insert(new Tile(SUIT.JOKER, 0));
+            initPlayerHandArray[0].exposedTileSetArray.push(tileSet);
+
         }
 
         this.table.deal(initPlayerHandArray);
