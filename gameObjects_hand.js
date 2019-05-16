@@ -705,18 +705,23 @@ export class Hand {
 
                                     switch (tile.angle) {
                                     case 270:
+                                    case -90:
                                         // Player 1  (right)
                                         tile.x -= 25;
                                         break;
                                     case 180:
+                                    case -180:
                                         // Player 2 (top)
                                         tile.y += 25;
                                         break;
                                     case 90:
+                                    case -270:
                                         // Player 3  (left)
                                         tile.x += 25;
                                         break;
                                     case 0:
+                                    case 360:
+                                    case -360:
                                     default:
                                         // Player 0 (bottom)
                                         tile.y -= 25;

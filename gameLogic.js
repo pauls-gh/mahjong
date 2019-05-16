@@ -135,6 +135,26 @@ export class GameLogic {
 
         }
 
+        if (0) {
+            // Test exposed jokers
+
+            // Player 0
+            initPlayerHandArray[0] = new Hand(false);
+            initPlayerHandArray[0].insertHidden(new Tile(SUIT.DOT, 4));   
+
+            // Player 1-3
+            for (let i = 1; i < 4; i++) {
+                initPlayerHandArray[i] = new Hand(false);
+
+                initPlayerHandArray[i].exposedTileSetArray = [];
+                const tileSet = new TileSet(false);
+                tileSet.insert(new Tile(SUIT.DOT, 4));
+                tileSet.insert(new Tile(SUIT.JOKER, 0));
+                tileSet.insert(new Tile(SUIT.JOKER, 0));
+                initPlayerHandArray[i].exposedTileSetArray.push(tileSet);
+            }
+        }
+
         this.table.deal(initPlayerHandArray);
 
         this.wallText.setText("Wall tile count = " + this.table.wall.getCount());
@@ -787,7 +807,7 @@ export class GameLogic {
             printMessage("- Google Chrome \n");
             printMessage("- Firefox\n");
             printMessage("- Microsoft Edge\n\n");
-            printMessage("American Mahjong v0.97\n");
+            printMessage("American Mahjong v0.98\n");
             printMessage("Using " + this.card.year + " Mahjong card\n\n");            
             printMessage("Press Start Game button\n");
             sort1.style.display = "none";
