@@ -43,7 +43,7 @@ export const hands13579 = {
         },
         {
             description: "11 333 5555 777 99 (3 suits)",
-            vsuitCount: 1,
+            vsuitCount: 3,
             concealed: false,
             odd: false,
             even: false,
