@@ -2,28 +2,31 @@ import {debugPrint, debugTrace, gdebug} from "../game.js";
 import {Tile} from "../gameObjects.js";
 import {Hand} from "../gameObjects_hand.js";
 import {SUIT, DRAGON, WIND, VNUMBER} from "../constants.js";
-import {CardTest2017} from "../card/2017/card_test.js";
-import {CardTest2018} from "../card/2018/card_test.js";
-import {CardTest2019} from "../card/2019/card_test.js";
-import {validHandGroups2017} from "../card/2017/card2017.js"
-import {validHandGroups2018} from "../card/2018/card2018.js"
-import {validHandGroups2019} from "../card/2019/card2019.js"
+//import {CardTest2017} from "../card/2017/card_test.js";
+//import {CardTest2018} from "../card/2018/card_test.js";
+//import {CardTest2019} from "../card/2019/card_test.js";
+import {CardTest2020} from "../card/2020/card_test.js";
+//import {validHandGroups2017} from "../card/2017/card2017.js"
+//import {validHandGroups2018} from "../card/2018/card2018.js"
+//import {validHandGroups2019} from "../card/2019/card2019.js"
+import {validHandGroups2020} from "../card/2020/card2020.js"
+
 
 // PRIVATE CONSTANTS
 
 // PRIVATE GLOBALS
 
 
-// Currently support 2017 and 2018 and 2019 card
+// Currently support 2017, 2018, 2019, 2020 card
 
 export class Card {
     constructor() {
-        this.year = "2019";
-        this.validHandGroups = validHandGroups2019;
+        this.year = "2020";
+        this.validHandGroups = validHandGroups2020;
 
         // Debug only
         if (0) {
-            const cardTest = new CardTest2019(this);
+            const cardTest = new CardTest2020(this);
             cardTest.test();
         }
 

@@ -807,7 +807,7 @@ export class GameLogic {
             printMessage("- Google Chrome \n");
             printMessage("- Firefox\n");
             printMessage("- Microsoft Edge\n\n");
-            printMessage("American Mahjong v0.99\n");
+            printMessage("American Mahjong v1.00\n");
             printMessage("Using " + this.card.year + " Mahjong card\n\n");            
             printMessage("Press Start Game button\n");
             sort1.style.display = "none";
